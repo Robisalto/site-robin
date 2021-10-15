@@ -1,0 +1,388 @@
+# Naviguer dans un système de fichier 
+## cd (Change directory)
+````
+cd / 
+````
+Va dans le repertoire racine
+## ls (Liste)
+````
+ls 
+````
+Donne juste les repertoires et fichiers du dossier courant 
+````
+ls -l 
+````
+Donne juste les repertoires et fichiers du dossier courant avec les permissions, propriétaires, tailles et dates de modification
+````
+ls -R
+````
+Donne juste les repertoires et fichiers du dossier courant de façon récursive
+## Tree
+````
+tree
+````
+Donne une arborescence visuelle 
+## Mkdir
+````
+mkdir directory
+````
+Créé un répertoire dans le dossier courant 
+````
+mkdir -p dir1/dir2 dir1/dir3
+````
+## Touch 
+````
+touch test
+````
+Créer un fichier test dans le répertoire courant 
+## Man
+```
+man rm
+man cp
+man mv
+```
+## ps (Process Status)
+```
+ps
+```
+Liste les processus actifs
+## Option rm (Remove)
+```
+rm
+```
+permet de supprimer un fichier 
+```
+rm -r
+```
+De façon recursive. Avec un R supprime aussi les fichiers cachés 
+```
+rm -f 
+```
+De façon forcé
+## Option cp (Copy)
+```
+cp fichie_copié dossier_de_destination 
+```
+```
+cp - r dossier_de_depart dossier_de_destination 
+```
+
+# Les permissions 
+## Fonctionnement des permissions
+Lorsque que l'on fait un ls -l, une suite de 10 caractères apparaissent en début de ligne 
+### Premier caractère 
+-   **-**  : fichier classique
+    
+-   **d**  : répertoire
+    
+-   **l**  : lien symbolique
+    
+-   **c**  : périphérique de type caractère
+    
+-   **b**  : périphérique de type bloc
+    
+-   **p**  : pipe (FIFO) "tube" ou "tuyau" en anglais ou pipeline aussi en français
+    
+-   **s**  : socket
+### Caractérisation 
+- **r** signifie en lecture
+- **w** en écriture 
+- **x** en éxécution
+
+> le premier groupe designe le **user** u
+> le deuxième le **groupe** g
+> le troisième les **other** o
+
+### Propriétaires
+>le premier nom designe le user propriétaire 
+>le deuxième nom désigne le groupe propriétaire 
+> le troisième correspond à la taille du fichier
+
+## Modifier les permissions chown (change owner)
+````
+sudo chown robin fichier1
+````
+Permet de changer le propriétaire du fichier 
+````
+sudo chown robin:group2 fichier1
+````
+Change le propriétaire et le groupe
+````
+sudo chown :group2 fichier1
+````
+Si seul le groupe doit être changé
+````
+sudo chown robin /dir1
+````
+Change le propriétaire du répertoire
+````
+sudo chown -R robin /dir1
+````
+Change le propriétaire du répertoire de façon récursive
+## Modification des droits avec chmod (Change Mode)
+````
+chmod [u/g/o] [-/+] [r/w/x] nom_du_fichier
+````
+On peut aussi utiliser la topologie suivante :
+-   0 :  **`- - -`**  (aucun droit)
+    
+-   1 :  **`- - x`**  (exécution)
+    
+-   2 :  **`- w -`**  (écriture)
+    
+-   3 :  **`- w x`**  (écriture et exécution)
+    
+-   4 :  **`r - -`**  (lecture seule)
+    
+-   5 :  **`r - x`**  (lecture et exécution)
+    
+-   6 :  **`r w -`**  (lecture et écriture)
+    
+-   7 :  **`r w x`**  (lecture, écriture et exécution)
+````
+  chmod -R 750 monRépertoire
+````
+Donnera de façon récursive tous les droits à l'utilisateur , juste lecture et exécution au groupe et aucun droit aux autres 
+
+
+### Rendre un fichier exécutable 
+```
+chmod +x prog
+```
+L'éxecuter 
+```
+./prog
+```
+# Les  Access Control Lists`  (ACL)
+
+> Par défaut, la gestion des droits sous Linux est relativement basique (bien que souvent suffisante). En effet, il n'est possible de permettre ou d'interdire la lecture, l'écriture et l'exécution de fichiers que pour trois catégories d'utilisateurs : le propriétaire du fichier, le groupe auquel appartient le propriétaire et le reste du monde. Cette gestion des droits permet de configurer les accès aux fichiers dans la plupart des situations simples mais peut s'avérer limitée, par exemple, dans un contexte où plusieurs utilisateurs doivent accéder à une ressource partagée alors qu'ils n'ont pas de groupe commun.
+
+L’installation du paquet  `acl`  est nécessaire car elle n'est pas toujours présente nativement sur ubuntu
+
+**Sous Debian et dérivés:**
+
+```
+sudo apt-get update && sudo apt-get install acl
+```
+les deux commandes suivantes sont équivalentes :
+````
+chmod u=rw fichier
+
+setfacl -m u::rw fichier
+````
+## getfacl
+````
+$ getfacl fichier
+````
+ >file: fichier
+ owner: utilisateur
+ group: utilisateur
+user::rwx
+user:utilisateur1:rw-
+user:utilisateur2:r--
+group::r--
+mask::rwx
+other::---
+
+## setfacl
+### autoriser à "utilisateur" la lecture et l'écriture sur "fichier"
+````
+setfacl -m user:utilisateur:rw fichier
+
+setfacl -m u:utilisateur:rw fichier
+````
+La même commande est disponible pour les groupes. Il suffit de remplacer  **u**/**user**  par  **g**  ou  **group**
+
+### modifier les permissions de plusieurs utilisateurs/groupes sur "fichier" en même temps
+````
+setfacl -m user:utilisateur:rwx,user:utilisateur2:r,group:groupe:rw fichier
+````
+### définir l'accès en lecture par défaut pour "utilisateur" pour les nouveaux fichiers créés dans "dossier"
+````
+setfacl -m d:u:utilisateur:r dossier
+````
+### supprimer les ACL pour un utilisateur sur une arborescence
+````
+setfacl -R -x user::nom_user repertoire_base_arborescence
+````
+### supprimer les ACL sur un fichier/dossier
+````
+setfacl -b fichier
+````
+# Les Alias
+```
+$ alias cd=ls
+```
+cd devient ls
+```
+$ unalias cd
+```
+## Configurer les Alias
+### Dans le ~/.bashrc
+```
+    alias ll='ls'
+```
+Entrer les alias que l'on souhaite garder
+Pour que les modification de ce fichier soient prises en compte
+```
+. ~/.bashrc
+```
+# Variables d'environnement 
+## Afficher les variables d'environnement 
+
+```
+printenv
+```
+Affiche toutes les variables d'environnement 
+```
+set
+```
+Affiche toutes les variables d'environnement définies
+## Afficher les variables d'environnement locales  
+
+```
+locale -a C
+```
+Affiche toutes les variables d'environnement locales
+
+Voici une description des autres variables d’environnement :
+
+-   `SHELL`  : le type du shell utilisé
+-   `USER`  : l’utilisateur actuel
+-   `PWD`  : le répertoire courant
+-   `PATH`  : les chemins de recherche des exécutables
+
+On peut afficher une variable en utilisant la commande  `echo`. Exemple:
+
+```
+$ echo $SHELL
+/bin/bash
+```
+## Recherche de commandes
+
+Quand vous tapez une commande (par exemple la commande  `toto`), le shell :
+
+1.  analyse la variable  `PATH`,
+2.  vérifie pour chaque répertoire listé dans  `PATH`  si un fichier exécutable nommmé  `toto`  existe (dans l’ordre des répertoires spécifiés)
+3.  exécute le programme  `toto`  qu’il a éventuellement trouvé.
+
+Ici, le shell essaye de trouver  `toto`  dans  `/usr/local/bin`, si la commande s’y trouve, alors il exécute cette commande. Sinon, il recherche dans le répertoire  `/usr/bin`  (puis les suivants) jusqu’à ce qu’il ait trouvé la commande  `toto`, ou qu’il ait épuisé tous les répertoires. Si à la fin de la recherche, il n’a pas trouvé la commande alors il affiche :
+
+```
+$ toto
+-bash: toto: command not found
+$
+```
+
+Ce qui signifie qu’il n’a pas trouvé cette commande dans les répertoires du  `PATH`. Pour modifier le chemin de recherche, il faut modifier la variable  `PATH`, comme suit :
+
+```
+$ export PATH=${PATH}:/un/nouveau/chemin:/un/autre/chemin
+$
+```
+
+Vous pouvez connaître la commande qui est exécutée avec la commande  `which`. Ici le shell vous indique que la commande  `ls`  se trouve dans le répertoire  `/bin`
+
+```
+$ which ls
+/bin/ls
+$
+```
+## Ecriture et affichage d’un fichier
+
+L’affichage d’un fichier se fait via deux commandes intéressantes:
+
+-   `cat NOM_DU_FICHIER`
+-   `less NOM_DU_FICHIER`
+# Liens symboliques 
+# Introduction
+
+Le lien symbolique est un raccourci au niveau du système de fichier.
+
+Il permet de définir un fichier fictif pointant vers un fichier situé dans un autre emplacement du système de fichiers.
+
+# Gestion des liens symboliques
+
+## Création
+
+La création se fait via la commande  `ln -s`.
+
+```
+ln -s cibleDuLien [nomDuLien]
+```
+
+Le nom du lien, s’il est omis, sera le nom du fichier 
+
+>Lorsque l'on créé un lien symbolique et que l'on fait un ls -l. un l apparaît en début de ligne
+
+## Avec les dossiers 
+
+Il est possible de créer un lien symbolique vers un dossier :
+
+```
+ln -s dossierCible lienVersLeDossier
+```
+# Gestion des utilisateurs 
+## Création d’utilisateurs et de groupes
+
+Les commandes pour gérer des utilisateurs sous Debian sont :
+
+-   `adduser`
+-   `addgroup`
+-   `deluser`
+-   `delgroup`
+
+D’autres commandes existent comme  `useradd`  ou  `groupdel`  mais elles sont moins pratiques à utiliser.
+## Ajouter un utilisateur 
+```
+sudo adduser robin 
+```
+### Ajouter un utilisateur à un groupe 
+```
+sudo adduser robin group_ajout
+```
+```
+usermod -aG group user
+```
+#### Vérifier que le transfert a bien été fait 
+```
+id robin
+```
+## Afficher la liste des utilisateurs 
+````
+cat /etc/passwd
+````
+## Afficher la liste des groupes
+````
+cat /etc/group
+````
+# Les redirections
+Le caractère `>` redirige la sortie de la commande qui le précède vers un fichier.
+```
+echo Bonjour le monde > bonjour.txt
+```
+```
+cat bonjour.txt
+````
+>Bonjour le monde
+
+## La sortie d'erreur 
+Lorsqu'une erreur apparaît, c'est en fait une redirection vers un fichier d'erreur 
+
+## le dossier /dev/null
+Ce dossier est une sorte de trou noir. Si on redirige quelque chose vers lui, les données seront supprimées
+## Ajouter du contenu dans un fichier 
+```
+echo '# A propos' > README.md
+echo 'Je suis un fichier informatif' >> README.md
+echo 'Ma création a été réalisée en plusieurs opérations' >> README.md
+```
+## Redirections
+````
+blabla > test.txt
+````
+Ecrase dans le fichier  
+````
+blabla >> test.txt
+````
+Met à la suite dans le fichier 

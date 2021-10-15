@@ -1,0 +1,231 @@
+# Installer open-ssh
+## installation du serveur
+```````
+apt-cache search ssh | grep server
+```````
+```````
+sudo apt-get install openssh-server
+```````
+
+## Vérifier que le daemon est en route 
+```````
+sudo service ssh status
+```````
+Si le service ne tourne pas 
+```````
+sudo systemctl start ssh
+```````
+Pour stopper le service
+```````
+sudo systemctl stop ssh
+```````
+## Lancer le serveur open ssh au démarrage 
+```````
+sudo systemctl enable ssh
+```````
+
+# Se connecter en SSH
+## Connexion SSH
+```
+$ ssh robin@192.168.21.164
+The authenticity of host '192.168.21.164 (192.168.21.164)' can't be established.
+ECDSA key fingerprint is SHA256:AWEa0Hd+1k0GAzuemRfaLs+CzPIgXXJ9DaoONx6zhZM.
+Are you sure you want to continue connecting (yes/no)?
+```
+Lorsque que l'on essaie de se connecter à un serveur ssh via un client ssh, on nous demande de vérifier l'empreinte ECDSA du serveur sur lequel on se connecte. Cela permet d'eviter en particulier les attaques **Man in the Middle**
+
+## Vérification de l'empreinte de la clef ECDSA
+Sur le bash du serveur on tape 
+```````
+ssh-keygen -lf chemin_vers_la_clef_publique_ecdsa
+```````
+la plupart du temps sous linux le chemin est le suivant :
+>/etc/ssh/ssh_host_ecdsa_key.pub
+
+Cela renvoie la clef ECDSA du serveur 
+
+Si on veut afficher une autre clef on change le chemin 
+>/etc/ssh/ssh_host_rsa_key.pub
+
+Pour la clef rsa publique par exemple
+# Mettre en place une clef de cryptage
+## Générer une clef client
+générer une clef pour le client 
+```````
+ssh-keygen -t rsa
+```````
+Si on veut créer une clef RSA
+```````
+ssh-keygen -t ed25519
+```````
+Si on veut créer une clef ed25519 encore plus sécurisée que la clef RSA
+
+coller cette clef chez le serveur dans le repertoire 
+>home/user/.ssh/authorized_keys
+
+Attention il faut coller l'ensemble de la clef du client avec les commentaires
+
+Si on est sur la machine client, on peut par exemple faire 
+````
+scp ~/.ssh/id-rsa.pub user@ip-serveur:~/.ssh/authorized_keys
+````
+# Configuration d'alias 
+Sur le client, créer le fichier nommé  `~/.ssh/config`
+
+Editer ce fichier selon le modèle suivant:
+
+```
+Host aliasversleserveur
+        User utilisateurserveur
+        Hostname adresseip_ou_adressereseau
+```
+
+Exécuter la commande suivante:
+
+```
+ssh aliasversleserveur
+```
+
+
+# Lancer l'agent SSH directement à l'ouverture du terminal
+
+Sur le client, créer le fichier  `.bash_profile`  :
+
+```
+touch .bash_profile
+```
+
+Selon votre distribution, le fichier à modifier peut être différent.
+
+Ce peut être:
+
+-   `.bash_profile`
+-   `.bashrc`
+## Contenu à ajouter
+
+Éditer le fichier souhaité et ajoutez les lignes suivantes à la fin du fichier :
+
+```
+SSH_ENV="$HOME/.ssh/environment"
+
+function start_agent {
+     echo "Initialising new SSH agent..."
+     /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+     echo succeeded
+     chmod 600 "${SSH_ENV}"
+     . "${SSH_ENV}" > /dev/null
+     /usr/bin/ssh-add;
+}
+
+# Source SSH settings, if applicable
+
+if [ -f "${SSH_ENV}" ]; then
+     . "${SSH_ENV}" > /dev/null
+     #ps ${SSH_AGENT_PID} doesn't work under cywgin
+     ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
+         start_agent;
+     }
+else
+     start_agent;
+fi
+```
+
+## Chargement de la configuration
+
+Pour charger la configuration nouvellement éditée, exécuter la commande suivante (cette opération s’appelle  _sourcer le fichier édité_) :
+
+```
+# Fichier .bash_profile
+. .bash_profile
+
+# Fichier .bashrc
+. .bashrc
+```
+# Configuration du serveur SSH
+## Les fichiers de config 
+Le fichier  `/etc/ssh/sshd_config`  permet de modifier les paramètres du serveur.
+
+Le fichier  `/etc/ssh/ssh_config`  permet de modifier les paramètres du client SSH.
+## Modification de la configuration
+### Sur le serveur 
+```
+sudo nano /etc/ssh/sshd_config
+```
+
+Modifier la ligne suivante :
+
+```
+#PasswordAuthentication yes
+```
+
+En supprimant le  `#`  et en remplaçant  `yes`  par  `no`
+
+```
+PasswordAuthentication no
+```
+
+Redémarrer le serveur SSH
+
+```
+sudo systemctl restart ssh
+```
+
+Vérifier qu’il a bien redémarré
+
+```
+sudo systemctl status ssh
+```
+# Renouvellement des clefs du serveur
+
+## Suppression des clefs
+
+```
+sudo rm /etc/ssh/ssh_host_*key*
+```
+
+## Re-génération des clefs
+
+La commande d’installation du paquet  `openssh-server`  permet de faire cela:  `sudo dpkg-reconfigure openssh-server`
+
+```
+$ sudo dpkg-reconfigure openssh-server
+Creating SSH2 RSA key; this may take some time ...
+2048 SHA256:WzDXAw/i2OXHceKvNMMfFrylg4bDpC0y9gEIGv+ySHg root@apprentissage (RSA)
+Creating SSH2 ECDSA key; this may take some time ...
+256 SHA256:D9+D2FF413S7IWzjOnFhpM3Vq+eo4MaHbRl59jsOy7I root@apprentissage (ECDSA)
+Creating SSH2 ED25519 key; this may take some time ...
+256 SHA256:X/StEQ4+wIk4g6Gq9MVIOLpig+tTV6F87D8lQ/04Wy8 root@apprentissage (ED25519)
+rescue-ssh.target is a disabled or a static unit, not starting it.
+```
+# Copie de fichiers via SSH
+
+## Commande SCP
+
+### Copie depuis le client vers le serveur
+
+La commande est exécuté  **sur le client**
+
+```
+scp /chemin/vers/fichier_source user@adresse:/chemin/vers/destination
+```
+
+Exemple:
+
+```
+scp script greta@192.168.21.132:~/
+```
+
+### Copie depuis le serveur vers le client
+
+La commande est exécuté  **sur le client**
+
+```
+scp user@adresse:/chemin/vers/fichier_source /chemin/vers/destination
+```
+
+Exemple:
+
+```
+scp greta@192.168.21.132:~/script .
+```
+

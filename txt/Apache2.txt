@@ -1,0 +1,11 @@
+
+# Mettre en place une pile Apache
+## Installation LAMP (Linux, Apache, MySQL, PHP)
+````
+sudo apt install apache2 php libapache2-mod-php mysql-server php-mysql
+````
+ou si vous préférez opter pour  MariaDB
+````
+sudo apt install apache2 php libapache2-mod-php mariadb-server php-mysql
+````
+>http://localhost mène alors vers la page d'accueil Apache 

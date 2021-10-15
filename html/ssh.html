@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>ssh</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="link/test.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<nav id="TOC">
+<ul>
+<li><a href="#installer-open-ssh">Installer open-ssh</a><ul>
+<li><a href="#installation-du-serveur">installation du serveur</a></li>
+<li><a href="#vérifier-que-le-daemon-est-en-route">Vérifier que le daemon est en route</a></li>
+<li><a href="#lancer-le-serveur-open-ssh-au-démarrage">Lancer le serveur open ssh au démarrage</a></li>
+</ul></li>
+<li><a href="#se-connecter-en-ssh">Se connecter en SSH</a><ul>
+<li><a href="#connexion-ssh">Connexion SSH</a></li>
+<li><a href="#vérification-de-lempreinte-de-la-clef-ecdsa">Vérification de l’empreinte de la clef ECDSA</a></li>
+</ul></li>
+<li><a href="#configuration-dalias">Configuration d’alias</a></li>
+<li><a href="#lancer-lagent-ssh-directement-à-louverture-du-terminal">Lancer l’agent SSH directement à l’ouverture du terminal</a><ul>
+<li><a href="#chargement-de-la-configuration">Chargement de la configuration</a></li>
+</ul></li>
+<li><a href="#configuration-du-serveur-ssh">Configuration du serveur SSH</a><ul>
+<li><a href="#les-fichiers-de-config">Les fichiers de config</a></li>
+</ul></li>
+<li><a href="#renouvellement-des-clefs-du-serveur">Renouvellement des clefs du serveur</a><ul>
+<li><a href="#suppression-des-clefs">Suppression des clefs</a></li>
+<li><a href="#re-génération-des-clefs">Re-génération des clefs</a></li>
+</ul></li>
+<li><a href="#copie-de-fichiers-via-ssh">Copie de fichiers via SSH</a><ul>
+<li><a href="#commande-scp">Commande SCP</a><ul>
+<li><a href="#copie-depuis-le-client-vers-le-serveur">Copie depuis le client vers le serveur</a></li>
+<li><a href="#copie-depuis-le-serveur-vers-le-client">Copie depuis le serveur vers le client</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="installer-open-ssh">Installer open-ssh</h1>
+<h2 id="installation-du-serveur">installation du serveur</h2>
+<pre><code>apt-cache search ssh | grep server</code></pre>
+<pre><code>sudo apt-get install openssh-server</code></pre>
+<h2 id="vérifier-que-le-daemon-est-en-route">Vérifier que le daemon est en route</h2>
+<pre><code>sudo service ssh status</code></pre>
+<p>Si le service ne tourne pas</p>
+<pre><code>sudo systemctl start ssh</code></pre>
+<p>Pour stopper le service</p>
+<pre><code>sudo systemctl stop ssh</code></pre>
+<h2 id="lancer-le-serveur-open-ssh-au-démarrage">Lancer le serveur open ssh au démarrage</h2>
+<pre><code>sudo systemctl enable ssh</code></pre>
+<h1 id="se-connecter-en-ssh">Se connecter en SSH</h1>
+<h2 id="connexion-ssh">Connexion SSH</h2>
+<pre><code>$ ssh robin@192.168.21.164
+The authenticity of host &#39;192.168.21.164 (192.168.21.164)&#39; can&#39;t be established.
+ECDSA key fingerprint is SHA256:AWEa0Hd+1k0GAzuemRfaLs+CzPIgXXJ9DaoONx6zhZM.
+Are you sure you want to continue connecting (yes/no)?</code></pre>
+<p>Lorsque que l’on essaie de se connecter à un serveur ssh via un client ssh, on nous demande de vérifier l’empreinte ECDSA du serveur sur lequel on se connecte. Cela permet d’eviter en particulier les attaques <strong>Man in the Middle</strong></p>
+<h2 id="vérification-de-lempreinte-de-la-clef-ecdsa">Vérification de l’empreinte de la clef ECDSA</h2>
+<p>Sur le bash du serveur on tape</p>
+<pre><code>ssh-keygen -lf chemin_vers_la_clef_publique_ecdsa</code></pre>
+<p>la plupart du temps sous linux le chemin est le suivant : &gt;/etc/ssh/ssh_host_ecdsa_key.pub</p>
+<p>Cela renvoie la clef ECDSA du serveur</p>
+<p>Si on veut afficher une autre clef on change le chemin &gt;/etc/ssh/ssh_host_rsa_key.pub</p>
+<p>Pour la clef rsa publique par exemple # Mettre en place une clef de cryptage ## Générer une clef client générer une clef pour le client</p>
+<pre><code>ssh-keygen -t rsa</code></pre>
+<p>Si on veut créer une clef RSA</p>
+<pre><code>ssh-keygen -t ed25519</code></pre>
+<p>Si on veut créer une clef ed25519 encore plus sécurisée que la clef RSA</p>
+<p>coller cette clef chez le serveur dans le repertoire &gt;home/user/.ssh/authorized_keys</p>
+<p>Attention il faut coller l’ensemble de la clef du client avec les commentaires</p>
+<p>Si on est sur la machine client, on peut par exemple faire</p>
+<pre><code>scp ~/.ssh/id-rsa.pub user@ip-serveur:~/.ssh/authorized_keys</code></pre>
+<h1 id="configuration-dalias">Configuration d’alias</h1>
+<p>Sur le client, créer le fichier nommé <code>~/.ssh/config</code></p>
+<p>Editer ce fichier selon le modèle suivant:</p>
+<pre><code>Host aliasversleserveur
+        User utilisateurserveur
+        Hostname adresseip_ou_adressereseau</code></pre>
+<p>Exécuter la commande suivante:</p>
+<pre><code>ssh aliasversleserveur</code></pre>
+<h1 id="lancer-lagent-ssh-directement-à-louverture-du-terminal">Lancer l’agent SSH directement à l’ouverture du terminal</h1>
+<p>Sur le client, créer le fichier <code>.bash_profile</code> :</p>
+<pre><code>touch .bash_profile</code></pre>
+<p>Selon votre distribution, le fichier à modifier peut être différent.</p>
+<p>Ce peut être:</p>
+<ul>
+<li><code>.bash_profile</code></li>
+<li><code>.bashrc</code> ## Contenu à ajouter</li>
+</ul>
+<p>Éditer le fichier souhaité et ajoutez les lignes suivantes à la fin du fichier :</p>
+<pre><code>SSH_ENV=&quot;$HOME/.ssh/environment&quot;
+
+function start_agent {
+     echo &quot;Initialising new SSH agent...&quot;
+     /usr/bin/ssh-agent | sed &#39;s/^echo/#echo/&#39; &gt; &quot;${SSH_ENV}&quot;
+     echo succeeded
+     chmod 600 &quot;${SSH_ENV}&quot;
+     . &quot;${SSH_ENV}&quot; &gt; /dev/null
+     /usr/bin/ssh-add;
+}
+
+# Source SSH settings, if applicable
+
+if [ -f &quot;${SSH_ENV}&quot; ]; then
+     . &quot;${SSH_ENV}&quot; &gt; /dev/null
+     #ps ${SSH_AGENT_PID} doesn&#39;t work under cywgin
+     ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ &gt; /dev/null || {
+         start_agent;
+     }
+else
+     start_agent;
+fi</code></pre>
+<h2 id="chargement-de-la-configuration">Chargement de la configuration</h2>
+<p>Pour charger la configuration nouvellement éditée, exécuter la commande suivante (cette opération s’appelle <em>sourcer le fichier édité</em>) :</p>
+<pre><code># Fichier .bash_profile
+. .bash_profile
+
+# Fichier .bashrc
+. .bashrc</code></pre>
+<h1 id="configuration-du-serveur-ssh">Configuration du serveur SSH</h1>
+<h2 id="les-fichiers-de-config">Les fichiers de config</h2>
+<p>Le fichier <code>/etc/ssh/sshd_config</code> permet de modifier les paramètres du serveur.</p>
+<p>Le fichier <code>/etc/ssh/ssh_config</code> permet de modifier les paramètres du client SSH. ## Modification de la configuration ### Sur le serveur</p>
+<pre><code>sudo nano /etc/ssh/sshd_config</code></pre>
+<p>Modifier la ligne suivante :</p>
+<pre><code>#PasswordAuthentication yes</code></pre>
+<p>En supprimant le <code>#</code> et en remplaçant <code>yes</code> par <code>no</code></p>
+<pre><code>PasswordAuthentication no</code></pre>
+<p>Redémarrer le serveur SSH</p>
+<pre><code>sudo systemctl restart ssh</code></pre>
+<p>Vérifier qu’il a bien redémarré</p>
+<pre><code>sudo systemctl status ssh</code></pre>
+<h1 id="renouvellement-des-clefs-du-serveur">Renouvellement des clefs du serveur</h1>
+<h2 id="suppression-des-clefs">Suppression des clefs</h2>
+<pre><code>sudo rm /etc/ssh/ssh_host_*key*</code></pre>
+<h2 id="re-génération-des-clefs">Re-génération des clefs</h2>
+<p>La commande d’installation du paquet <code>openssh-server</code> permet de faire cela: <code>sudo dpkg-reconfigure openssh-server</code></p>
+<pre><code>$ sudo dpkg-reconfigure openssh-server
+Creating SSH2 RSA key; this may take some time ...
+2048 SHA256:WzDXAw/i2OXHceKvNMMfFrylg4bDpC0y9gEIGv+ySHg root@apprentissage (RSA)
+Creating SSH2 ECDSA key; this may take some time ...
+256 SHA256:D9+D2FF413S7IWzjOnFhpM3Vq+eo4MaHbRl59jsOy7I root@apprentissage (ECDSA)
+Creating SSH2 ED25519 key; this may take some time ...
+256 SHA256:X/StEQ4+wIk4g6Gq9MVIOLpig+tTV6F87D8lQ/04Wy8 root@apprentissage (ED25519)
+rescue-ssh.target is a disabled or a static unit, not starting it.</code></pre>
+<h1 id="copie-de-fichiers-via-ssh">Copie de fichiers via SSH</h1>
+<h2 id="commande-scp">Commande SCP</h2>
+<h3 id="copie-depuis-le-client-vers-le-serveur">Copie depuis le client vers le serveur</h3>
+<p>La commande est exécuté <strong>sur le client</strong></p>
+<pre><code>scp /chemin/vers/fichier_source user@adresse:/chemin/vers/destination</code></pre>
+<p>Exemple:</p>
+<pre><code>scp script greta@192.168.21.132:~/</code></pre>
+<h3 id="copie-depuis-le-serveur-vers-le-client">Copie depuis le serveur vers le client</h3>
+<p>La commande est exécuté <strong>sur le client</strong></p>
+<pre><code>scp user@adresse:/chemin/vers/fichier_source /chemin/vers/destination</code></pre>
+<p>Exemple:</p>
+<pre><code>scp greta@192.168.21.132:~/script .</code></pre>
+<footer>
+  @copyright Robin Couturier
+</footer>
+</body>
+</html>

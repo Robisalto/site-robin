@@ -1,0 +1,14 @@
+Analyse technique
+Ansible
+Apache2
+Bourse stratégie long terme
+Docker
+ITIL
+Terraform
+bash
+installation tomcat
+installer un VM
+jeux python
+microsoft_azure
+mysql
+ssh

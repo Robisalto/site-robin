@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>mysql</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="link/test.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<nav id="TOC">
+<ul>
+<li><a href="#installer-mysql">Installer mysql</a><ul>
+<li><a href="#installation">installation</a></li>
+<li><a href="#vérifier-que-mysql-tourne">Vérifier que mysql tourne</a></li>
+</ul></li>
+<li><a href="#se-connecter-à-un-compte-mysql">Se connecter à un compte mysql</a></li>
+<li><a href="#commandes-pratiques">Commandes pratiques</a><ul>
+<li><a href="#voir-les-bases-de-données">Voir les bases de données</a></li>
+<li><a href="#voir-les-champs-dune-table">Voir les champs d’une table</a></li>
+<li><a href="#accorder-tous-les-privilèges-à-un-nouvel-utilisateur">Accorder tous les privilèges à un nouvel utilisateur</a></li>
+<li><a href="#créer-une-nouvelle-base-de-données">Créer une nouvelle base de données</a></li>
+<li><a href="#créer-un-nouvel-utilisateur">Créer un nouvel utilisateur</a></li>
+<li><a href="#créer-une-table-dans-la-base-de-données">Créer une table dans la base de données</a></li>
+<li><a href="#remplir-une-table">Remplir une table</a></li>
+<li><a href="#faire-des-selections-spécifiques">Faire des selections spécifiques</a></li>
+<li><a href="#faire-des-requêtes-dans-plusieurs-tables-imbriquées">Faire des requêtes dans plusieurs tables imbriquées</a></li>
+<li><a href="#ordonner-des-champs">Ordonner des champs</a></li>
+<li><a href="#grouper-les-champs">Grouper les champs</a></li>
+<li><a href="#créer-une-fonction-sans-quelle-apparaisse-dans-le-résultat">Créer une fonction sans qu’elle apparaisse dans le résultat</a></li>
+<li><a href="#créer-des-conditions-sur-le-résultat-des-fonctions">Créer des conditions sur le résultat des fonctions</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="installer-mysql">Installer mysql</h1>
+<h2 id="installation">installation</h2>
+<pre><code>sudo apt install mysql-server</code></pre>
+<h2 id="vérifier-que-mysql-tourne">Vérifier que mysql tourne</h2>
+<pre><code>sudo service mysql status</code></pre>
+<p>Si le service ne tourne pas</p>
+<pre><code>sudo systemctl start mysql</code></pre>
+<p>Pour stopper le service</p>
+<pre><code>sudo systemctl stop mysql</code></pre>
+<h1 id="se-connecter-à-un-compte-mysql">Se connecter à un compte mysql</h1>
+<pre><code>sudo mysql -h hostname -u user -p</code></pre>
+<blockquote>
+<p>On entre ensuite le MP</p>
+</blockquote>
+<h1 id="commandes-pratiques">Commandes pratiques</h1>
+<h2 id="voir-les-bases-de-données">Voir les bases de données</h2>
+<pre><code>show databases;</code></pre>
+<h2 id="voir-les-champs-dune-table">Voir les champs d’une table</h2>
+<pre><code>SELECT * FROM Proprietaire;</code></pre>
+<h2 id="accorder-tous-les-privilèges-à-un-nouvel-utilisateur">Accorder tous les privilèges à un nouvel utilisateur</h2>
+<pre><code>GRANT ALL PRIVILEGES ON *.* TO &#39;username&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;password&#39;;</code></pre>
+<h2 id="créer-une-nouvelle-base-de-données">Créer une nouvelle base de données</h2>
+<pre><code>CREATE DATABASE dbname ;</code></pre>
+<h2 id="créer-un-nouvel-utilisateur">Créer un nouvel utilisateur</h2>
+<pre><code>  CREATE USER robin@localhost IDENTIFIED BY robin;</code></pre>
+<h2 id="créer-une-table-dans-la-base-de-données">Créer une table dans la base de données</h2>
+<pre><code>CREATE TABLE utilisateur
+(
+    nom VARCHAR(100),
+    prenom VARCHAR(100),
+    email VARCHAR(255),
+    date_naissance DATE,
+    pays VARCHAR(255),
+    ville VARCHAR(255),
+    code_postal VARCHAR(5),
+    nombre_achat INT
+)</code></pre>
+<h2 id="remplir-une-table">Remplir une table</h2>
+<pre><code>INSERT INTO table (nom_colonne_1, nom_colonne_2, ...
+ VALUES (&#39;valeur 1&#39;, &#39;valeur 2&#39;, ...)</code></pre>
+<p>ou</p>
+<pre><code>INSERT INTO client (prenom, nom, ville, age)
+ VALUES
+ (&#39;Rébecca&#39;, &#39;Armand&#39;, &#39;Saint-Didier-des-Bois&#39;, 24),
+ (&#39;Aimée&#39;, &#39;Hebert&#39;, &#39;Marigny-le-Châtel&#39;, 36),
+ (&#39;Marielle&#39;, &#39;Ribeiro&#39;, &#39;Maillères&#39;, 27),
+ (&#39;Hilaire&#39;, &#39;Savary&#39;, &#39;Conie-Molitard&#39;, 58);</code></pre>
+<h2 id="faire-des-selections-spécifiques">Faire des selections spécifiques</h2>
+<pre><code>SELECT type_p
+FROM poste
+WHERE n_poste=&#39;p8&#39;;</code></pre>
+<pre><code>SELECT NOM_P
+FROM POSTE
+WHERE TYPE_P &lt;&gt; &#39;UNIX&#39; AND TYPE_P &lt;&gt; &#39;PCWS&#39;;</code></pre>
+<h2 id="faire-des-requêtes-dans-plusieurs-tables-imbriquées">Faire des requêtes dans plusieurs tables imbriquées</h2>
+<pre><code>SELECT N_SEGMENT
+FROM SEGMENT
+WHERE N_SEGMENT IN
+    (SELECT N_SEGMENT
+    FROM POSTE
+    WHERE TYPE_P = &#39;UNIX&#39;);</code></pre>
+<p>Dans la table poste on sélectionne tous les segments qui sont de type unix Puis dans ces segment là, on sélectionne dans la table segment leur nom de segment</p>
+<h2 id="ordonner-des-champs">Ordonner des champs</h2>
+<pre><code>SELECT CONCAT(N_SEGMENT,&#39;.&#39;,AD), N_POSTE, N_SALLE
+FROM POSTE
+WHERE N_SEGMENT = &#39;130.120.80&#39;AND (TYPE_P = &#39;UNIX&#39; OR TYPE_P = &#39;PCWS&#39;)
+ORDER BY N_SALLE DESC;</code></pre>
+<p><strong>Order</strong> by permet d’ordonner des champs [ASC : ordre croissant] / [DESC : Ordre décroissant]</p>
+<h2 id="grouper-les-champs">Grouper les champs</h2>
+<pre><code>SELECT N_POSTE, COUNT(N_LOG)
+FROM installer
+GROUP BY N_POSTE;</code></pre>
+<p><strong>Group by</strong> permet de grouper des champs ensembles.</p>
+<p>Ici par exemple on va compter le nombre de logiciel installés par numéro de poste puis grouper les résultats par numéro de postes</p>
+<h2 id="créer-une-fonction-sans-quelle-apparaisse-dans-le-résultat">Créer une fonction sans qu’elle apparaisse dans le résultat</h2>
+<pre><code>SELECT Nopilot, Nom
+FROM pilote
+WHERE Embauche IN
+    (SELECT MIN(Embauche)
+    FROM pilote);</code></pre>
+<p>On selectionne la date d’embauche minimum puis on affiche le Numéro et le Nom du pilote associé</p>
+<h2 id="créer-des-conditions-sur-le-résultat-des-fonctions">Créer des conditions sur le résultat des fonctions</h2>
+<pre><code>SELECT N_POSTE
+FROM installer
+GROUP BY N_POSTE
+HAVING COUNT(N_LOG) = 2;</code></pre>
+<p><strong>Having</strong> permet de créer une condition sur la fonction Count.</p>
+<p>Ici on va grouper les numéro de poste Sachant que ceux-ci ont exactement deux logiciels installés</p>
+<footer>
+  @copyright Robin Couturier
+</footer>
+</body>
+</html>

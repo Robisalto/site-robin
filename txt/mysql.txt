@@ -1,0 +1,143 @@
+# Installer mysql 
+## installation 
+```````
+sudo apt install mysql-server
+```````
+
+## Vérifier que mysql tourne
+```````
+sudo service mysql status
+```````
+Si le service ne tourne pas 
+```````
+sudo systemctl start mysql
+```````
+Pour stopper le service
+```````
+sudo systemctl stop mysql
+```````
+# Se connecter à un compte mysql
+```````
+sudo mysql -h hostname -u user -p
+```````
+> On entre ensuite le MP
+
+# Commandes pratiques
+## Voir les bases de données
+```````
+show databases;
+```````
+## Voir les champs d'une table 
+````
+SELECT * FROM Proprietaire;
+````
+## Accorder tous les privilèges à un nouvel utilisateur
+````
+GRANT ALL PRIVILEGES ON *.* TO 'username'@'localhost' IDENTIFIED BY 'password';
+````
+## Créer une nouvelle base de données 
+```````
+CREATE DATABASE dbname ;
+```````
+## Créer un nouvel utilisateur 
+```````
+  CREATE USER robin@localhost IDENTIFIED BY robin;
+```````
+## Créer une table dans la base de données
+````
+CREATE TABLE utilisateur
+(
+    nom VARCHAR(100),
+    prenom VARCHAR(100),
+    email VARCHAR(255),
+    date_naissance DATE,
+    pays VARCHAR(255),
+    ville VARCHAR(255),
+    code_postal VARCHAR(5),
+    nombre_achat INT
+)
+````
+## Remplir une table 
+````
+INSERT INTO table (nom_colonne_1, nom_colonne_2, ...
+ VALUES ('valeur 1', 'valeur 2', ...)
+ ````
+ou 
+````
+INSERT INTO client (prenom, nom, ville, age)
+ VALUES
+ ('Rébecca', 'Armand', 'Saint-Didier-des-Bois', 24),
+ ('Aimée', 'Hebert', 'Marigny-le-Châtel', 36),
+ ('Marielle', 'Ribeiro', 'Maillères', 27),
+ ('Hilaire', 'Savary', 'Conie-Molitard', 58);
+ ````
+
+## Faire des selections spécifiques 
+````
+SELECT type_p
+FROM poste
+WHERE n_poste='p8';
+````
+
+````
+SELECT NOM_P
+FROM POSTE
+WHERE TYPE_P <> 'UNIX' AND TYPE_P <> 'PCWS';
+````
+
+
+## Faire des requêtes dans plusieurs tables imbriquées 
+````
+SELECT N_SEGMENT
+FROM SEGMENT
+WHERE N_SEGMENT IN
+	(SELECT N_SEGMENT
+	FROM POSTE
+	WHERE TYPE_P = 'UNIX');
+````
+
+Dans la table poste on sélectionne tous les segments qui sont de type unix
+Puis dans ces segment là, on sélectionne dans la table segment leur nom de segment 
+
+## Ordonner des champs
+````
+SELECT CONCAT(N_SEGMENT,'.',AD), N_POSTE, N_SALLE
+FROM POSTE
+WHERE N_SEGMENT = '130.120.80'AND (TYPE_P = 'UNIX' OR TYPE_P = 'PCWS')
+ORDER BY N_SALLE DESC;
+````
+**Order** by permet d'ordonner des champs [ASC : ordre croissant] / [DESC : Ordre décroissant]
+
+## Grouper les champs
+````
+SELECT N_POSTE, COUNT(N_LOG)
+FROM installer
+GROUP BY N_POSTE;
+````
+**Group by** permet de grouper des champs ensembles. 
+
+Ici par exemple on va compter le nombre de logiciel installés par numéro de poste puis grouper les résultats par numéro de postes  
+
+## Créer une fonction sans qu'elle apparaisse dans le résultat 
+
+````
+SELECT Nopilot, Nom
+FROM pilote
+WHERE Embauche IN
+	(SELECT MIN(Embauche)
+	FROM pilote);
+````
+
+On selectionne la date d'embauche minimum puis on affiche le Numéro et le Nom du pilote associé 
+
+## Créer des conditions sur le résultat des fonctions 
+````
+SELECT N_POSTE
+FROM installer
+GROUP BY N_POSTE
+HAVING COUNT(N_LOG) = 2;
+````
+
+**Having** permet de créer une condition sur la fonction Count.
+
+Ici on va grouper les numéro de poste Sachant que ceux-ci ont exactement deux logiciels installés 

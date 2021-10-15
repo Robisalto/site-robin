@@ -1,0 +1,191 @@
+
+
+# Les différents types de Cloud
+
+Azure (Microsoft), Google, Alibaba, OVH, AWS
+
+Offre des services managés :
+
+>- Calcul
+>- Réseau
+>- Stockage
+>- IA
+
+# Comment on gère le Cloud
+## Infra as Code
+>Aussi nommée **infrastructure** programmable, l'**infrastructure as code** (IaC) est une démarche qui vise à configurer une **infrastructure** informatique (virtuelle), d'une façon similaire à une programmation de logiciel, en utilisant des fichiers descripteurs et des **codes**
+
+>exemple : Terraform
+Permet de configurer des services Amazon par exemple. Je veux installer une VM sur Amazon, au lieu de tout faire à la fin sur le site AWS, je fais un fichier de config avec tout ce dont j'ai besoin. On peut utiliser **brainboard** pour pouvoir créer des fichiers de config Terraform
+
+>**Terraform**  est un environnement logiciel d'infrastructure as code publié en  open-source par la société HashiCorp. Cet outil permet d'automatiser la construction des ressources d'une infrastructure de  centre de données comme un  réseau, des  machines virtuelles , un groupe de sécurité ou une base de données.
+
+## Automatisation de la gestion des serveurs
+exemple :  **Ansible**
+
+Utilise **ssh et python** pour faire des actions sur les machines cibles 
+Il est utilisable sur cloud public, cloud privé, serveur physique etc..
+
+Ansible est de type **déclaratif**
+
+On l'utilise que sur des **process standardisés**
+
+Il est couplé à **git** pour la gestion de configuration
+
+## Différence entre Ansible et Terraform
+
+> Ansible et Terraform sont AgentLess. C'est à dire qu'ils utilisent des connexion ssh sans avoir à installer auparavant des daemon comme puppet-agent par exemple servant à faire de la gestion de configuration de serveur esclave
+
+> Cependant Terraform est Statefull tandis que Ansible est Stateless. Donc Terraform va être capable de stocker des données sur la configuration des serveurs et ce qui a été installé ce qui n'est pas le cas d'Ansible 
+
+> On va donc utiliser **Terraform** pour **créer les serveurs** 
+
+>**Ansible** pour les **configurer**
+>
+# Commandes de base Ansible
+## Installer Ansible 
+````
+sudo apt install ansible 
+````
+## Exécuter des commandes
+````
+ansible group1 -i myhosts -m command -a date
+````
+Récupère la date sur le serveur distant
+
+Créer un fichier playbook.yml
+```yaml
+- hosts: host01 become: true tasks: - name: ensure latest sysstat is installed apt: name: sysstat state: latest
+```
+
+-   `hosts: host`  tells Ansible to run the tasks on the host  _host_
+-   `become: true`  makes all your tasks run as  `sudo`
+-   `- name:`  is basically a comment, describing what the task does
+-   `apt:`  specifies the module we want to use
+-   `name:`  is an argument to the  `apt`  module, that specifies the name of the package to install.
+
+# Définition des Rôle
+## Créer un template de role
+On peut lancer des rôles spécifiques
+Dans un dossier roles, on va créer un template de role
+
+````
+ansible-galaxy role init installDocker
+```` 
+
+## Créer un fichier playbook.yml
+> C'est le fichier principal qui va exécuter les commandes ansible
+
+````
+touch playbook.yml
+```` 
+
+```yaml
+- hosts: all  
+gather_facts: no  
+become: true  
+roles:  
+- installDocker
+```
+
+- gather_facts : est-ce que l'on souhaite stocker des données
+- become : est-ce qu'on souhaite se placer en mode sudo
+
+# Remplir le role 
+## Remplir le fichier tasks/ main.yml
+
+Dans le dossier tasks/main.yml on met nos commandes que l'on souhaite exécuter lorsque l'on appelle le role 
+Si on souhaite installer Docker par exemple
+### Installer Docker 
+```yaml
+  - name: Install required system packages
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+  - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+  - name: Add Docker Repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+  - name: Update apt and install docker-ce
+      apt: update_cache=yes name=docker-ce state=latest
+  - name: Install Docker Module for Python
+      pip: name: docker
+```
+
+### Installer Terraform
+```yaml
+- name: Add Terraform gpg Key
+  apt_key:
+    url: https://apt.releases.hashicorp.com/gpg
+    state: present
+
+- name: Add Terraform Repository
+  apt_repository:
+    repo: deb [arch=amd64] https://apt.releases.hashicorp.com focal main
+    state: present
+
+- name: Update and install terraform
+  apt:
+    name: terraform
+    state: present
+    update_cache: yes
+```
+## Remplir le fichier vars/default.yml
+
+On peut ajouter un fichier vars_files dans le fichier playbook.yml
+
+```yaml
+- hosts: all
+  become: true
+  vars_files:
+    - vars/default.yml
+```
+Dans le fichier default.yml
+```yaml
+create_containers: 4
+default_container_name: docker
+default_container_image: ubuntu
+default_container_command: sleep 1d
+```
+Lancer une commande ansible 
+````
+ansible-playbook playbook.yml 
+````
+-l localhost : adresseIP
+-u local : user 
+-K : utilise le password par défaut
+
+# Configuration du fichier inventory
+
+> Le fichier inventory permet de définir les groupes avec les informations nécessaires à la connexion ssh 
+
+- nom de l'adresse IP définie par le DNS
+- nom de l'utilisateur 
+- mot de passe de l'utilisateur 
+````
+[group]
+nom_de_domaine ou adresse ip
+[group:vars]
+ansible_ssh_user = student 
+ansible_ssh_password = student 
+ansible_ssh_port = numéro de port
+ansible_become_password = password root
+ansible_become_user = user root
+ansible_become_port = numéro du port
+````
+
+# Lancer le playbook
+````
+ansible-playbook playbook.yml
+````
+````
+ansible-playbook playbook.yml -i inventory
+````
+Utilise un fichier inventory spécifique 
+````
+ansible-playbook playbook.yml -l user 
+````
+sur un user spécifique 

@@ -1,0 +1,58 @@
+# On crée un dossier tomcat_install
+mkdir -p tomcat_install
+
+# On va dans le dossier
+cd tomcat_install
+
+# On récupère les tar.gz et le sha512
+wget https://downloads.apache.org/tomcat/tomcat-8/v8.5.69/bin/apache-tomcat-8.5.69.tar.gz
+wget https://downloads.apache.org/tomcat/tomcat-8/v8.5.69/bin/apache-tomcat-8.5.69.tar.gz.sha512
+sha512sum -c apache-tomcat-8.5.69.tar.gz.sha512
+
+# On verifie que tout c'est bien passé
+# On doit voir :
+# apache-tomcat-8.5.69.tar.gz
+# apache-tomcat-8.5.69.tar.gz.sha512
+ls -l
+
+# On va dans /usr/local
+cd /usr/local/
+
+# On decompresse le dossier
+sudo tar -xzvf apache-tomcat-8.5.69.tar.gz
+
+# Creation d'un lien symbolique
+sudo ln -s apache-tomcat-8.5.69/ apache-tomcat-8.5
+
+# On va créer un utilisateur pour Tomcat avec un home directory (-d) et un shell bash (-s)
+sudo useradd tomcat-8.5 -d /usr/local/apache-tomcat-8.5 -s /bin/bash
+
+# On change les droits pour être sûr que l'utilisateur tomcat-8.5 ait accès à
+# apache-tomcat-8.5.69
+sudo chown -R tomcat-8.5 /usr/local/apache-tomcat-8.5.69/
+
+# On se connecte sur l'utilisateur tomcat
+sudo su - tomcat-8.5
+
+# Demarrage du Serveur
+# On va dans le dossier bin accessible par l'utilisateur tomcat-8.5
+cd ~/bin
+# On lance le bash
+./startup.sh
+# On recupère l'adresse ip
+ip addr
+# Dans un navigateur (Brave sous windows par ex.) on met l'adresse ip avec le port d'écoute:
+# xxx.xxx.xxx.xxx:8080
+# Cela doit ouvrir une page Tomcat
+
+# Pour arrêté le serveur Tomcat
+./shutdown.sh
+
+# On va dans le dossiers logs pour regarder les 
+# logs de sortie
+cd ../logs
+# On ouvre catalina.out ave cla commande less
+less catalina.out
+# Quand le serveur est en route on peut avoir 
+# une trace en direct de l'activité
+tail -f localhost_access_log.<date>.txt

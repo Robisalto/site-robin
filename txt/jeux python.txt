@@ -1,0 +1,112 @@
+# Mise en place d'un jeu python
+## Les modules à installer
+
+Avant de se lancer il est nécessaire de vérifier que certains modules sont installés 
+- pygame qui est une bibliothèque pour la création de jeux vidéos 
+> sudo pip install pygame
+- pytmx qui permet de gérer le chargement de cartes Tiled 
+> sodo pip install pytmx
+- pyscroll qui permet de faire du scroll rapide 
+> sudo pip install pyscroll
+
+## Créer la fenêtre de jeu et la boucle de jeu 
+### importer Pygame
+Dans le main on import pygame **import pygame** et on l'initialise pour démarrer le module **pygame.init()**
+
+Le plus simple est de créer une classe ***Game*** qui sera appelée dans la classe ***main***
+
+> classe Game()
+``` 
+class Game:  
+    def __init__(self):  
+        #creer la fenetre du jeu  
+        pygame.display.set_mode((800, 600))  
+        pygame.display.set_caption("Pygamon - Aventure")
+```
+puis on crée une méthode **run()** qui est une *boucle while* permettant d'effectuer des opérations successives en à la vitesse de notre processeur 
+
+>def run(self):  
+  
+  ```running = True   
+ while running:  
+        for event in pygame.event.get():  
+            if event.type == pygame.QUIT:  
+                running = False  
+  
+  pygame.quit()
+```
+
+> classe main
+``` 
+import pygame  
+from game import Game  
+pygame.init()
+
+if __name__ == '__main__':  
+    pygame.init()  
+    game = Game()  
+    game.run()
+```
+# Initialisation du projet et chargement de la carte 
+## Chargement de la carte 
+### Creation carte.tmx
+Dans un premier temps on créé une carte Tiled que l'on enregistre ensuite dans le dossier du projet au format ***.tmx***
+
+### Récupération des données 
+On ajoute dans notre groupe Game
+```
+import pytmx  
+import pyscroll
+```
+Dans notre classe Game, on récupère d'abord les données sous la forme d'une TiledMap class via :
+```
+tmx_data = pytmx.util_pygame.load_pygame("carte.tmx")
+```
+On charge une map_data qui nous servira pour pyscroll et qui charge les tmx_data
+```
+map_data = pyscroll.data.TiledMapData(tmx_data)
+```
+Le map_layer comme son nom l'indique va pouvoir gérer les différentes caractéristiques de notre map
+```
+map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
+```
+Par exemple on peut définir le niveau de zoom avec :
+```
+map_layer.zoom = 2
+```
+### Dessin de la carte
+
+On récupère le groupe de Calques avec :
+```
+self.group = pyscroll.PyscrollGroup(map_layer=map_layer,default_layer = 1)
+```
+On le dessine sur l'écran à chaque tour de boucle avec : 
+```
+self.group.draw(self.screen)  
+#permet de updater à chaque tour de boucle 
+pygame.display.flip() 
+```
+# Création du personnage 
+## mise en place de la classe Player
+
+Le personnage va être un sprite comme tous les objets qui ne seront pas directement lié au décor 
+la classe Player va donc hériter de la superclasse Sprite du module pygame
+```
+import pygame  
+  
+class Player(pygame.sprite.Sprite):  
+  
+    def __init__(self):  
+	    #on initialise la superclasse 
+        super().__init__()
+```
+On va ensuite définir les premières caractéristiques du personnage pour qu'il puisse être positionné sur la carte correctement
+ ```
+ #on charge l'image du joueur
+self.sprite_sheet = pygame.image.load("player.png")  
+#on définit le fond de l'image en transparent 
+self.image.set_colorkey([0,0,0])  
+#on récupère le rectangle de l'image 
+self.rect = self.image.get_rect()
+```
+Dans notre cas on a récupéré une image correspondant à mon personnage mais dans toutes les positions 

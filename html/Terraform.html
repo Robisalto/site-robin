@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Terraform</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="link/test.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<nav id="TOC">
+<ul>
+<li><a href="#utilisation-de-terraform">Utilisation de Terraform</a><ul>
+<li><a href="#configurer-un-groupe-de-ressources">Configurer un groupe de ressources</a></li>
+<li><a href="#créer-une-ressource-théorie">Créer une ressource théorie</a></li>
+<li><a href="#coupler-avec-son-compte-azure">Coupler avec son compte Azure</a></li>
+<li><a href="#on-créé-un-réseau-virtuel">On créé un réseau virtuel</a></li>
+<li><a href="#on-créé-un-sous-réseau-dans-le-réseau-principal">On créé un sous réseau dans le réseau principal</a></li>
+<li><a href="#on-met-en-place-des-règles-de-sécurité">On met en place des règles de sécurité</a></li>
+<li><a href="#on-crée-une-interface-réseau">On crée une interface réseau</a></li>
+<li><a href="#connecter-le-groupe-de-sécurité-à-linterface-réseau">Connecter le groupe de sécurité à l’interface réseau</a></li>
+<li><a href="#on-crée-une-clef-ssh-pour-pouvoir-se-loguer-directement">On crée une clef SSH pour pouvoir se loguer directement</a></li>
+</ul></li>
+<li><a href="#lancer-les-services">Lancer les services</a><ul>
+<li><a href="#appliquer-les-ressources">Appliquer les ressources</a></li>
+<li><a href="#récupérer-la-clef-privée">Récupérer la clef privée</a></li>
+<li><a href="#connexion-en-ssh-sur-le-serveur-azure">Connexion en ssh sur le serveur Azure</a></li>
+<li><a href="#configurer-le-serveur-distant-azure-via-ansible">Configurer le serveur distant Azure via Ansible</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="utilisation-de-terraform">Utilisation de Terraform</h1>
+<h2 id="configurer-un-groupe-de-ressources">Configurer un groupe de ressources</h2>
+<p>https://learn.hashicorp.com/tutorials/terraform/azure-build?in=terraform/azure-get-started</p>
+<blockquote>
+<p>Dans un fichier main.tf</p>
+</blockquote>
+<pre><code>#Configure the Azure provider
+terraform {
+required_providers {
+azurerm =  {
+source = &quot;hashicorp/azurerm&quot;
+version = &quot;~&gt; 2.65&quot;
+}
+}
+required_version =  &quot;&gt;= 0.14.9&quot;
+}
+provider  &quot;azurerm&quot; {
+features {}
+}
+resource  &quot;azurerm_resource_group&quot;  &quot;rg-robin&quot; {
+name  =  &quot;rg-robin&quot;
+location  =  &quot;westeurope&quot;
+}</code></pre>
+<h2 id="créer-une-ressource-théorie">Créer une ressource théorie</h2>
+<pre><code>#Create virtual network
+resource  &quot;azurerm_nom_de_la_ressource_dans_le_ressource_manager&quot;  &quot;nom_de_la_ressource_pour_terraform&quot; {</code></pre>
+<blockquote>
+<p>La première partie avant l’accolade correspond à la création de l’objet Terraform</p>
+</blockquote>
+<pre><code>name  =  &quot;robin-network&quot;
+address_space  =  [&quot;10.0.0.0/16&quot;]
+location  =  &quot;westeurope&quot;
+resource_group_name  =  azurerm_resource_group.rg-robin.name</code></pre>
+<blockquote>
+<p>L’intérieur du crochet est réservé à Azure, un définit un certain nombre de caractéristique sur notre ressource</p>
+</blockquote>
+<pre><code>tags  =  {
+environment = &quot;robin-network&quot;
+}
+}</code></pre>
+<blockquote>
+<p>Les tags vont permettre de pointer vers un utilisateur précis dans les logs par exemple</p>
+</blockquote>
+<h2 id="coupler-avec-son-compte-azure">Coupler avec son compte Azure</h2>
+<pre><code>az login</code></pre>
+<blockquote>
+<p>Cliquer sur le lien puis entrer le code Se connecter sur notre compte Azure ## Lancer Terraform</p>
+</blockquote>
+<pre><code>terraform init</code></pre>
+<blockquote>
+<p>Initialise Terraform</p>
+</blockquote>
+<pre><code>terraform plan</code></pre>
+<blockquote>
+<p>Créé un plan d’éxécution</p>
+</blockquote>
+<pre><code>terraform validate</code></pre>
+<blockquote>
+<p>vérifie que le fichier .tf ne contient pas d’erreurs</p>
+</blockquote>
+<pre><code>terraform apply - auto-approve</code></pre>
+<blockquote>
+<p>applique le fichier main.tf auto-approve permet d’eviter la confirmation</p>
+</blockquote>
+<pre><code>terraform destroy - auto-approve</code></pre>
+<blockquote>
+<p>Détruit les ressources du fichier main.tf # Configurer une VM Linux https://docs.microsoft.com/en-us/azure/developer/terraform/create-linux-virtual-machine-with-infrastructure ## On a déjà créé un groupe de ressources (cf partie 1)</p>
+</blockquote>
+<pre><code>#Configure the Azure provider
+terraform {
+required_providers {
+azurerm =  {
+source = &quot;hashicorp/azurerm&quot;
+version = &quot;~&gt; 2.65&quot;
+}
+}
+required_version =  &quot;&gt;= 0.14.9&quot;
+}
+provider  &quot;azurerm&quot; {
+features {}
+}
+resource  &quot;azurerm_resource_group&quot;  &quot;rg-robin&quot; {
+name  =  &quot;rg-robin&quot;
+location  =  &quot;westeurope&quot;
+}</code></pre>
+<h2 id="on-créé-un-réseau-virtuel">On créé un réseau virtuel</h2>
+<pre><code>#Create virtual network
+resource  &quot;azurerm_virtual_network&quot;  &quot;robin-network&quot; {
+name  =  &quot;robin-network&quot;
+address_space  =  [&quot;10.0.0.0/16&quot;]
+location  =  &quot;westeurope&quot;
+resource_group_name  =  azurerm_resource_group.rg-robin.name
+tags  =  {
+environment = &quot;robin-network&quot;
+}
+}</code></pre>
+<h2 id="on-créé-un-sous-réseau-dans-le-réseau-principal">On créé un sous réseau dans le réseau principal</h2>
+<pre><code>#Create subnet
+resource  &quot;azurerm_subnet&quot;  &quot;robin-subnet&quot; {
+name  =  &quot;robin-subnet&quot;
+resource_group_name  =  azurerm_resource_group.rg-robin.name
+virtual_network_name  =  azurerm_virtual_network.robin-network.name
+address_prefixes  =  [&quot;10.0.1.0/24&quot;]
+}</code></pre>
+<blockquote>
+<p>on associe le subnet et le net en pointant vers robin-network ## On créé un IP public</p>
+</blockquote>
+<pre><code>#Create public IPs
+resource  &quot;azurerm_public_ip&quot;  &quot;robin-ip&quot; {
+name  =  &quot;robin-ip&quot;
+location  =  &quot;westeurope&quot;
+resource_group_name  =  azurerm_resource_group.rg-robin.name
+allocation_method  =  &quot;Dynamic&quot;
+tags  =  {
+environment = &quot;robin-ip&quot;
+}</code></pre>
+<h2 id="on-met-en-place-des-règles-de-sécurité">On met en place des règles de sécurité</h2>
+<pre><code>}
+#Create Network Security Group and rule
+resource  &quot;azurerm_network_security_group&quot;  &quot;robin-nsg&quot; {
+name  =  &quot;robin-nsg&quot;
+location  =  &quot;westeurope&quot;
+resource_group_name  =  azurerm_resource_group.rg-robin.name
+security_rule {
+name  =  &quot;SSH&quot;
+priority  =  1001
+direction  =  &quot;Inbound&quot;
+access  =  &quot;Allow&quot;
+protocol  =  &quot;Tcp&quot;
+source_port_range  =  &quot;*&quot;
+destination_port_range  =  &quot;22&quot;
+source_address_prefix  =  &quot;*&quot;
+destination_address_prefix  =  &quot;*&quot;
+}
+tags  =  {
+environment = &quot;robin-nsg&quot;
+}
+}</code></pre>
+<blockquote>
+<p>On peut traduire par : concernant les connexion ssh entrantes (Inbound), elles sont autorisées via le protocole TCP pour toutes les sources quelques soit leur port d’entrée sur le port 22 du serveur virtuel.</p>
+</blockquote>
+<h2 id="on-crée-une-interface-réseau">On crée une interface réseau</h2>
+<pre><code>#Create network interface
+resource  &quot;azurerm_network_interface&quot;  &quot;robin-nic&quot; {
+name  =  &quot;robin-nic&quot;
+location  =  &quot;westeurope&quot;
+resource_group_name  =  azurerm_resource_group.rg-robin.name
+ip_configuration {
+name  =  &quot;robin-icconfig&quot;
+subnet_id  =  azurerm_subnet.robin-subnet.id
+private_ip_address_allocation  =  &quot;Dynamic&quot;
+public_ip_address_id  =  azurerm_public_ip.robin-ip.id
+}
+tags  =  {
+environment = &quot;robin-nic&quot;
+}</code></pre>
+<blockquote>
+<p>On créé une carte réseau virtuelle (network interface card) On l’associe à un sous réseau et on alloue dynamiquement les adresses ip privées au sein du réseau On lui associe l’adresse ip publique qu’on a crée précédemment</p>
+</blockquote>
+<h2 id="connecter-le-groupe-de-sécurité-à-linterface-réseau">Connecter le groupe de sécurité à l’interface réseau</h2>
+<pre><code>}
+#Connect the security group to the network interface
+resource  &quot;azurerm_network_interface_security_group_association&quot;  &quot;example&quot; {
+network_interface_id  =  azurerm_network_interface.robin-nic.id
+network_security_group_id  =  azurerm_network_security_group.robin-nsg.id
+}</code></pre>
+<blockquote>
+<p>On exprime le fait que l’id de l’interface est celui de la carte réseau. C’est elle qui fera le lien entre l’adresse publique et l’adresse privée On dit que les règles de sécurité sont celles du network security group ## On créé un espace de stockage pour stocker les logs</p>
+</blockquote>
+<pre><code>#Generate random text for a unique storage account name
+resource  &quot;random_id&quot;  &quot;randomId&quot; {
+keepers  =  {
+#Generate a new ID only when a new resource group is defined
+resource_group = azurerm_resource_group.rg-robin.name
+}
+ byte_length  =  8
+}
+#Create storage account for boot diagnostics
+resource  &quot;azurerm_storage_account&quot;  &quot;robin-storage&quot; {
+name  =  &quot;diag${random_id.randomId.hex}&quot;
+resource_group_name  =  azurerm_resource_group.rg-robin.name
+location  =  &quot;westeurope&quot;
+account_tier  =  &quot;Standard&quot;
+account_replication_type  =  &quot;LRS&quot;
+tags  =  {
+environment = &quot;robin-storage&quot;
+}
+}</code></pre>
+<blockquote>
+<p>On crée un nom diag543356 dans lequel on stockera les logs</p>
+</blockquote>
+<h2 id="on-crée-une-clef-ssh-pour-pouvoir-se-loguer-directement">On crée une clef SSH pour pouvoir se loguer directement</h2>
+<pre><code>#Create (and display) an SSH key
+resource  &quot;tls_private_key&quot;  &quot;robin-ssh&quot; {
+algorithm  =  &quot;RSA&quot;
+rsa_bits  =  4096
+}
+output  &quot;tls_private_key&quot; {
+value  =  tls_private_key.robin-ssh.private_key_pem
+sensitive =  true
+}</code></pre>
+<blockquote>
+<p>On crée une clef SSH dont on stockera la clef publique dans le serveur (“authorized key”) On envoie en output la clef privée au client pour qu’il puisse se connecter au serveur avec sa clef privée ## On crée une machine virtuelle Linux</p>
+</blockquote>
+<pre><code>#Create virtual machine
+resource  &quot;azurerm_linux_virtual_machine&quot;  &quot;robin-vm&quot; {
+name  =  &quot;robin-vm&quot;
+location  =  &quot;westeurope&quot;
+resource_group_name  =  azurerm_resource_group.rg-robin.name
+network_interface_ids  =  [azurerm_network_interface.robin-ic.id]
+size  =  &quot;Standard_DS1_v2&quot;
+os_disk {
+name  =  &quot;myOsDisk&quot;
+caching  =  &quot;ReadWrite&quot;
+storage_account_type  =  &quot;Premium_LRS&quot;
+}
+source_image_reference {
+publisher  =  &quot;Canonical&quot;
+offer  =  &quot;UbuntuServer&quot;
+sku  =  &quot;18.04-LTS&quot;
+version  =  &quot;latest&quot;
+}
+computer_name  =  &quot;robin-vm&quot;
+admin_username  =  &quot;robin&quot;
+disable_password_authentication  =  true
+admin_ssh_key {
+username  =  &quot;robin&quot;
+public_key  =  tls_private_key.robin-ssh.public_key_openssh
+}
+boot_diagnostics {
+storage_account_uri  =  azurerm_storage_account.robin-storage.primary_blob_endpoint
+}
+tags  =  {
+environment = &quot;robin-vm&quot;
+}
+}</code></pre>
+<h1 id="lancer-les-services">Lancer les services</h1>
+<h2 id="appliquer-les-ressources">Appliquer les ressources</h2>
+<pre><code>terraform apply </code></pre>
+<h2 id="récupérer-la-clef-privée">Récupérer la clef privée</h2>
+<pre><code>terraform output</code></pre>
+<p>Donne la clef privée que l’on peux rediriger dans un fichier nommé private_key</p>
+<pre><code>terraform output -raw tls_private_key &gt; private_key</code></pre>
+<p>On peux faire un sécurisation de la private key en mettant le fichier seulement en lecture pour l’utiliateur via</p>
+<pre><code>chmod 400 private_key</code></pre>
+<h2 id="connexion-en-ssh-sur-le-serveur-azure">Connexion en ssh sur le serveur Azure</h2>
+<pre><code>ssh -i private_key user@ip-public</code></pre>
+<blockquote>
+<p>Attention, si jamais la clef privée n’est pas dans le cache on peut la charger via</p>
+</blockquote>
+<pre><code>eval `ssh-agent -s
+ssh-add ~/private_key</code></pre>
+<h2 id="configurer-le-serveur-distant-azure-via-ansible">Configurer le serveur distant Azure via Ansible</h2>
+<pre><code>ansible-playbook playbook.yml -i adresse_ip_publique, -u user </code></pre>
+<blockquote>
+<p>Va lancer les configuration du fichier playbook si la clef privée est chargée dans le cache On peut aussi configurer le fichier inventory pour se passer des arguments de fin de ligne</p>
+</blockquote>
+<footer>
+  @copyright Robin Couturier
+</footer>
+</body>
+</html>

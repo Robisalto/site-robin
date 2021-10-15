@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Apache2</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="link/test.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<nav id="TOC">
+<ul>
+<li><a href="#mettre-en-place-une-pile-apache">Mettre en place une pile Apache</a><ul>
+<li><a href="#installation-lamp-linux-apache-mysql-php">Installation LAMP (Linux, Apache, MySQL, PHP)</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="mettre-en-place-une-pile-apache">Mettre en place une pile Apache</h1>
+<h2 id="installation-lamp-linux-apache-mysql-php">Installation LAMP (Linux, Apache, MySQL, PHP)</h2>
+<pre><code>sudo apt install apache2 php libapache2-mod-php mysql-server php-mysql</code></pre>
+<p>ou si vous préférez opter pour MariaDB</p>
+<pre><code>sudo apt install apache2 php libapache2-mod-php mariadb-server php-mysql</code></pre>
+<blockquote>
+<p>http://localhost mène alors vers la page d’accueil Apache</p>
+</blockquote>
+<footer>
+  @copyright Robin Couturier
+</footer>
+</body>
+</html>

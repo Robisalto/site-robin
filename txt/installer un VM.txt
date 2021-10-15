@@ -1,0 +1,169 @@
+# Installation d'une VM 
+## Téléchargement de VMware
+> https://www.vmware.com/fr/products/workstation-pro/workstation-pro-evaluation.html
+
+# Mettre user dans sudoers
+## Passer en mode super utilisateur 
+````
+apt install sudo
+````
+```````
+adduser robin sudo
+```````
+Ajout de Robin au groupe sudo
+>Attention il faut redémarrer pour que les modifications soient prises en compte 
+
+test que robin appartient bien au groupe sudo
+```
+sudo -u robin echo bonjour
+```
+# Configuration du réseau
+Éditer le fichier  `/etc/network/interfaces`  :
+
+```
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+allow-hotplug ens33
+iface ens33 inet dhcp
+```
+
+Sous la ligne  `The primary network interface`, noter le nom de l’interface (que l’on notera  `NOM_INTERFACE`). Ici:  `ens33`
+
+Sous cette même ligne, ajouter une nouvelle ligne sur le modèle suivant:
+
+```
+auto NOM_INTERFACE
+```
+
+En prenant l’exemple d’`ens33`, on devrait obtenir:
+
+```
+# The primary network interface
+auto ens33
+allow-hotplug ens33
+iface ens33 inet dhcp
+```
+
+Ensuite, redémarrer les services réseaux avec la commande suivante :
+
+```
+sudo systemctl restart networking
+```
+## Configuration du gestionnaire de paquets
+
+Avant de continuer, vérifier la version de votre distribution en examinant le contenu du fichier  `/etc/os-release`:
+
+```
+$ cat /etc/os-release
+PRETTY_NAME="Debian GNU/Linux 10 (buster)"
+NAME="Debian GNU/Linux"
+VERSION_ID="10"
+VERSION="10 (buster)"
+VERSION_CODENAME="buster"
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+```
+
+La ligne  `VERSION`  indique le nom de code qui est à reprendre dans le fichier  `sources.list`  ci-dessous.
+
+Utiliser dans le fichier  `sources.list`  uniquement le nom correspondant à votre version de distribution.
+
+Dans le cas contraire, vous risquez de corrompre totalement votre système.
+
+### Mise à jour des sources
+
+Editer le fichier  `/etc/apt/sources.list`:
+
+```
+sudo nano /etc/apt/sources.list
+```
+
+Commenter les lignes commençant par  `deb http://security.debian.org`  et  `deb-src http://security.debian.org/`
+
+Rajouter les lignes suivantes (d’après  [https://wiki.debian.org/fr/SourcesList](https://wiki.debian.org/fr/SourcesList)).
+
+```
+deb http://deb.debian.org/debian buster main contrib non-free
+deb-src http://deb.debian.org/debian buster main contrib non-free
+
+deb http://deb.debian.org/debian-security/ buster/updates main contrib non-free
+deb-src http://deb.debian.org/debian-security/ buster/updates main contrib non-free
+
+deb http://deb.debian.org/debian buster-updates main contrib non-free
+deb-src http://deb.debian.org/debian buster-updates main contrib non-free
+```
+
+Les paquets  `non-free`  sont les paquets non libres de droits intellectuels.
+
+Avant de continuer, vérifier que le nom de code dans le fichier  `sources.list`  correspond à celui de la version installée.
+
+### Mise à jour apt
+
+Ceci permet de mettre à jour la base de données locale des dépendances. À faire avant toute nouvelle installation si vous ne l’avez pas fait dans les dernières 24h.
+
+```
+sudo apt-get update
+```
+
+### Pour les systèmes installés à partir des DVD
+
+Si vous avez installé votre système à partir des DVD, vous devez réaliser les opérations précédentes lorsque vous n’avez pas configurer les miroirs (_apt mirror_) au moment de l’installation. Il n’est pas nécessaire de refaire ces opérations  **sauf si vous souhaitez ajouter les paquets  `non-free`  (non libres)**.
+
+Plus d’informations sont disponibles sur les fichiers  `sources.list`  sur le site de  `Debian`  en faisant attention à l’identifiant de version Debian (`Buster`,  `Stretch`, …) :  [https://wiki.debian.org/fr/SourcesList](https://wiki.debian.org/fr/SourcesList)  (faire une recherche avec les mots :  `debian apt source`)
+
+## Installation ne
+
+`ne`  (Nice Editor) est un éditeur de texte ayant une ergonomie plus simple pour les personnes peu habituées à Linux. Ce paragraphe illustre l’installation de  `ne`  ou de n’importe quel autre paquet.
+
+### Installation
+
+L’installation du paquet proprement dite se fait avec la commande suivante:
+
+```
+sudo apt-get install ne
+```
+
+# Arrêt du système
+
+## Commande d’arrêt
+
+```
+sudo shutdown -h now
+```
+
+### Alternative
+
+```
+sudo halt
+# Parfois, elle ne stoppe pas l'alimentation électrique de la machine
+```
+
+## Commande de redémarrage
+
+```
+sudo shutdown -r now
+```
+
+### Alternative
+
+```
+sudo reboot
+```
+# Installation des outils WMware
+## Connexion en tant que root
+
+En tant que root
+
+```
+apt install open-vm-tools-desktop
+```

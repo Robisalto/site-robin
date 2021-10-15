@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>microsoft_azure</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="link/test.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<nav id="TOC">
+<ul>
+<li><a href="#formation-microsoft-azure-fundamentals-az-900">Formation Microsoft Azure Fundamentals AZ-900</a><ul>
+<li><a href="#quest-ce-que-le-cloud">Qu’est ce que le cloud ?</a><ul>
+<li><a href="#cloud-hybride">Cloud hybride</a></li>
+</ul></li>
+<li><a href="#avantage-du-cloud">Avantage du cloud</a><ul>
+<li><a href="#capex-vs-opex">CAPEX vs OPEX</a></li>
+</ul></li>
+<li><a href="#module-3-solution-de-base-et-outils-de-gestion">Module 3 : Solution de base et outils de gestion</a><ul>
+<li><a href="#big-data-et-analytique">Big Data et analytique</a></li>
+<li><a href="#devops">Devops</a></li>
+</ul></li>
+<li><a href="#module-6-gestions-des-coûts-et-sla">Module 6 : Gestions des coûts et SLA</a><ul>
+<li><a href="#azure-advisor">Azure Advisor</a></li>
+<li><a href="#azure-ad-roles">Azure AD roles</a></li>
+<li><a href="#differences-entre-azure-policies-et-azure-roles">Differences entre Azure Policies et Azure Roles</a></li>
+<li><a href="#differences-entre-azure-ad-roles-et-azure-roles">Differences entre Azure AD Roles et Azure Roles</a></li>
+<li><a href="#azure-role-recap">Azure role recap</a></li>
+<li><a href="#les-éléments-du-prix">Les éléments du prix</a></li>
+<li><a href="#core-storage-services">Core Storage Services</a></li>
+<li><a href="#azure-file-share-déploiement-linux">Azure File Share (déploiement Linux)</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="formation-microsoft-azure-fundamentals-az-900">Formation Microsoft Azure Fundamentals AZ-900</h1>
+<h2 id="quest-ce-que-le-cloud">Qu’est ce que le cloud ?</h2>
+<p>Le cloud décrit l’accès via internet à des outils. Ensemble de serveurs physique qui crée des instances pour des clients. Le client paie en fonction de sa consommation. Stockage, Calcul, Mise en réseau. On va donc lui offrir des ressources flexibles ### Cloud privé Une orga crée un environnement cloud dans son centre de données L’organisation est responsable des services qu’elle fournit Ne fournit pas d’accès aux utilisateurs extérieurs On contrôle intégralement notre cloud de stockage. #### Avantage Répondre à des besoin spécifiques de l’entreprise On a accès physiquement au centre de données ### Cloud public Appartient au fournisseurs de service Cloud Fournit des ressources et des services Accessible via une <strong>connexion réseau</strong> #### Avantage Cout inferieur Pas à gérer la maintenance Extensibilité illimité des ressources Vaste réseau de serveurs qui</p>
+<h3 id="cloud-hybride">Cloud hybride</h3>
+<p>Combinaison des deux Les données circulent entre un cloud privé et un cloud public #### Avantage Tirer parti des ressources publiques quand on en a besoin Permet d’être flexible Facilité de transition vers le cloud publique tout en conservant la maitrise des ses données sensibles</p>
+<h2 id="avantage-du-cloud">Avantage du cloud</h2>
+<ul>
+<li>Haute dispo</li>
+<li>Tolérance aux pannes</li>
+<li>scalabilité : ajuster la capacité de traitement au besoin</li>
+<li>élasticité : s’adapter rapidement à la montée de charge = <strong>scalabilité automatisée</strong></li>
+<li>Portée mondiale (être au plus proche du client)</li>
+<li>Agilité : créer des ressources à la volée</li>
+<li>prévision des coûts</li>
+</ul>
+<h3 id="capex-vs-opex">CAPEX vs OPEX</h3>
+<p>CAPEX : financement pour sécuriser leur bien physique (data center privé). Investissement long terme de matériel (Cloud privé) OPEX : paiement à la conso de services (cloud public). On loue des ressources auprès de Microsoft. Modèle basé sur la consommation. On paie que ce que l’on consomme. Meilleure prévision des coûts. ## Les différentes structures de Cloud ### IaaS Chaque ressource est offert en tant que composant de service distinct. On s’occupe de l’ouverture des ports et les services. On garde la maitrise. ### PaaS Contient aussi le systeme de développement. Site Web d’une boite par exemple. On s’occupe seulement du développement mais on reste lui sur le code. L’infrastructure n’est plus maintenu par nous. Le fournisseur gère le système d’exploitation. ### SaaS Applications hébergées. Mettre en oeuvre rapidement une application. Modèle d’abonnement. Solution packagée complète. ### Responsabilité On est responsable de nos données dans tous les types de déploiement. ## Principaux services Azure Choisir la région la plus proche. On est soumis à la loi de la région. 60 régions représentant à plus de 140 pays. Latence / prix / aspect législatif Les régions sont appairées en cas de problème sur la région primaire, la région secondaire prend le relais. Réplication des données automatique. ### Les différents services #### Azure VM Windows ou Linux Virtual Machines. On choisit son OS, sa mémoire, son CPU, son espace de stockage. #### Azure Container Services Docker as a Service. lance des containers sans avoir besoins de mettre en place de VM #### Azure Kubernetes Service (AKS) Kubernetes as a Service. Permet de deployer, gérer et déployer des containers. #### Azure Service Fabric ou App service Lance des microservices (App) #### Azure Functions Lance du code serverless ### Les différents espaces de stockage #### Azure Blob storage Servless, pas besoin de modifier la taille du stockage, c’est une boîte dans laquelle on stocke ce que l’on veut #### Azure Disk Storage SSD ou HDD. Volume attaché aux VM #### Azure file storage Volume de stockage qui peut être utilisé par plusieurs VM. Utilise le protocole SMB. #### Azure Queue Storage Permet de faire de la migration d’application #### Azure Data Box Permet de déplacer énormement de données TB ou PT #### Azure Archive Storage Permet de stocker sur long terme pour des coûts réduits #### Azure Data Lake Storage Stocker des données non structurées de provenance différentes ### Les différents services de base de données #### Azure Cosmos DB Base de données NoSQL #### Azure SQL Database Microsoft SQL #### Azure Database for MySQL /PSQL / MariaDB Utilise MySQL / PstGre ou MariaDB #### SQL Server on VMs Microsoft SQL sur notre VM ### Services Cloud Réseau #### Azure DNS Permet des réponses DNS ultra rapide et un panel de nom de domaine super large #### Azure Virtual Network un section isolée du reseau Azure dans lequel lancer nos ressources #### Azure Load Balancer Repartition de charge niveau 4 #### Azure Application Gateway VPN #### Azure Security Groups Parefeu virtuel pour le reseau virtuel</p>
+<h2 id="module-3-solution-de-base-et-outils-de-gestion">Module 3 : Solution de base et outils de gestion</h2>
+<h3 id="big-data-et-analytique">Big Data et analytique</h3>
+<h4 id="aure-synapse-analytics">Aure Synapse Analytics</h4>
+<h4 id="azure-hdinsight">Azure HDInsight</h4>
+<h4 id="azure-databricks">Azure Databricks</h4>
+<h4 id="azure-machinelearning">Azure MachineLearning</h4>
+<h4 id="azure-cognitive-services">Azure Cognitive Services</h4>
+<h4 id="azure-bot-service">Azure Bot Service</h4>
+<h3 id="devops">Devops</h3>
+<h4 id="azure-devops">Azure Devops</h4>
+<h4 id="github">GitHub</h4>
+<h4 id="azuredevtestlab">AzureDevTestLab</h4>
+<h4 id="azure-ressource-manager">Azure Ressource Manager</h4>
+<p>Permet d’utiliser des scripts pour gérer notre déploiement cloud via JSON template. On peut communiquer avec lui via powershell, bash, VSCode, CLI (Interface de ligne de commande), portail azure, API REST, Azure mobile app ## Module 4 : Sécurité ### Azure Active Directory Gestion des identités et des accès qui permet aux utilisateurs d’accéder à leur ressources. ### SSO : single Sign On Juste nom d’utilisateur et mot de passe. ### MFA : Multi Factor Authentification On doit utiliser un second moyen pour s’identifier. Un téléphone avec un code PIN par exemple ### Azure Security Center Donne des indicateurs sur le niveau de sécurité ### Key Vault Permet de sauvegarder de manière sécurisée nos clef privées, créer des clefs, Gérer les certificats. ### Azure Ddos protection DDoS : créer un énorme flux de faux trafic pour noyer le serveur La protection est gratuite. ### Azure FireWall Va sélectionner les adresses IP qui peuvent entrer ### Azure Information Protection Crypte e-mails, messages, ppt ### Application Gateway Créer des règles de redirection du trafic. En fonction de l’IP, on est redirigé vers tel ou tel serveur. Sorte de rond point alors que le PareFeu est plutôt un poste de péage. ### Azure Role Based Access Control (RBAC) Il permet de savoir qui a accès à une ressource. Le moyen de contrôler les accès se décline en trois axes : - principe de sécurité : représente l’identité de celui qui a accès à une ressource Azure (utilisateur , groupe d’utilisateurs) - la définition du rôle : collection de permission (read, write, delete) - scope : les frontières (management group, subscriptions, ressources group, ressources) ### Lock ressources On peut empêcher de supprimer un groupe de ressources par exemple ou alors faire du readonly</p>
+<h2 id="module-6-gestions-des-coûts-et-sla">Module 6 : Gestions des coûts et SLA</h2>
+<h3 id="azure-advisor">Azure Advisor</h3>
+<p>Analyse les ressources Azure déployées et formule des recommandations pour optimiser le déploiement et réduire les coûts ### Azure Monitor Optimise la disponibilité des performances des applications et des services en collectant, analysant et utilisant la télémétrie de nos environnements cloud et locaux ### Azure Service Health Evaluer l’impact des problèmes de service Azure.<br />
+### SLA : Service Level Agreement Permet de définir le temps minimum de connectivité d’un groupe de ressources. Azure s’engage à ce que la ressource soit disponible x % du temps. si jamais ce n’est pas le cas, des bonus seront offerts. ### TCO calculator Calcule le bénéfice de migrer vers Azure ### Azure subscriptions #### Free Subscription 200 USD crédits free for 30 days #### Pay As You Go On paie ce qu’on consomme #### Entreprise Agreement Contrat pour les entreprises #### Student Subscription Pour les étudiants ### Azure Pricing Calculator Donne le coût des produits Azure ### Azure Cost Management Indicateurs dans le temps de la gestion des coûts. Permet de mettre des valeurs limites pour être averti en cas de dérives. # Formation Microsoft Azure Administrator AZ-104 ## Introduction Azure AD Outil de gestion de l’authentification et de l’autorisation d’accès des resources qu’elle soit externes (SaaS, Azure Portal, …) ou interne (ressources dans notre réseau interne) On peut utiliser Azure AD pour du SSO ou pour des utilisations plus sécurisée. Il y a 4 niveaux d’AD. Azure AD donne accès aux ressources cloud mais il peut tout à fait être connecté avec l’Active Directory interne de l’entreprise. ### Définition #### Un domaine Un domaine est une partie du réseau organisé par une unique base de données d’authentification. Un domaine d’active diretory est donc un groupe logique d’objet d’AD dans un réseau #### Domaine controller Serveur qui authentifie un utilisateur et l’autorise à accéder aux ressources #### AD Objet C’est un élément basique de l’active directory Utilisateur, Groupe, Imprimantes, oridnateurs, Dossiers partagés, .. #### GPO : Group Policy Object Une collection virtuelle de règles qui contrôle les objets de l’AD #### Organisation Units Une sous division de l’AD #### Directory service donne la methode de stockage des données et les rend disponible pour les utilisateurs. il tourne sur le domain controller ### Azure AD - Tenant (locataire) C’est une instance de Service Azure dédiée il comprend : 1. un rôle 2. une licence 3. un ID 4. un domaine associé ### Azure AD Domain Services Permet de mettre en place son propre domain controller. ### Azure AD Connect Connecter son propre Active Directory à son compte Azure ### Azure Directory Objects #### Azure Directory Users Cela represente une identité pour une personne ou une employé. deux types de users : 1. users 2. guest users #### AD Groups Permet d’assigner des permissions à l’ensemble des membres présents dans ce groupe au lieu de les faire un par un. Il y a des propriétaires ou des membres ### Revision de cette partie &gt; https://www.youtube.com/watch?v=10PbGbTUSAg&amp;t=1743s &gt; 55’’ ## Device Management ### Definition Management des différents devices tels que telephones, tablettes, ordinateurs, … 3 moyens de les administrer : 1. Azure AD Registered pour les ordinateurs personnels ou les téléphones. on s’y connecte avec un compte perso Microsoft. Entreprise avec une politique <strong>Bring Your Own Device</strong>. 2. Azure AD joined Les dispositifs possédés par l’organisation On s’y connecte avec un compte lié à l’organisation Existe seulement dans le cloud 3. Hybrid Azure AD joined pour les devices possédés par l’orga mais on peut s’y connecter avec un compte privé et ca existe sur le cloud et sur place ### Recap 1’13’’ ## Les rôles 1. admin subscritpion classic Le rôle de manager système 2. les rôles Azure Role-Based Acess Controls (RBAC) qui permettent d’autoriser l’accès aux ressources et qui sont au dessus de l’Azure Ressource Manager 3. les rôles Azure de l’Active Directory permet de gérer les ressources de l’AD dans un répertoire ### Identity Access Controls (IAM) Permet de créer et d’assigner des rôles aux utilisateurs / groupes (RBAC system). Il existe deux types de rôles : - les rôles prédéfinis (pré-créé dans Microsoft) - les rôles customisés que l’on peut définir nous même ### Les administrateurs #### Administrateur du compte Celui qui paie la subscription. Il n’a pas accès au portail Azure #### L’administrateur service C’est le propriétaires de la subscription. Possède un accès complet au portail Azure #### Co-administrator Même privilège que l’administrateur ### RBAC Aide à gérer qui a accès à une ressource Azure, ce qu’ils peuvent faire avec la ressource et à quelle zone ils ont accès La répartition des rôles se fait selon trois critères - <strong>principes de sécurité</strong> : qui veut accéder à la ressource ? utilisateur extérieur / utilisateur Azure de l’AD / groupe / application - <strong>définition du rôle</strong> : propriétaire, contributeur, lecteur, administrateur d’accès utilisateurs - <strong>scope</strong> : la subscription, le groupe, les ressources</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: center;">Lire</th>
+<th style="text-align: center;">Accorder</th>
+<th style="text-align: center;">Créer,Mettre à jour,Effacer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Propriétaire</td>
+<td style="text-align: center;">ok</td>
+<td style="text-align: center;">ok</td>
+<td style="text-align: center;">ok</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Contributeur</td>
+<td style="text-align: center;">ok</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">ok</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lecteur</td>
+<td style="text-align: center;">ok</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Administrateur d’accès util</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">ok</td>
+<td style="text-align: center;">X</td>
+</tr>
+</tbody>
+</table>
+<h3 id="azure-ad-roles">Azure AD roles</h3>
+<ul>
+<li>créer ou éditer des utilisateurs</li>
+<li>assigner des roles admin aux autres</li>
+<li>changer les mots de passe utilisateurs</li>
+<li>gérer les licences utilisateurs</li>
+<li>gérer les domaines</li>
+</ul>
+<h4 id="quelques-roles-importants">Quelques roles importants</h4>
+<ul>
+<li><strong>Administrateur global</strong> : accès total à tout</li>
+<li><strong>Administrateur utilisateurs</strong> : accès total pour gérer et administrer les utilisateurs</li>
+<li><strong>Billing administrateur</strong> : fait les achats , gère les subscriptions et les tickets</li>
+</ul>
+<h3 id="differences-entre-azure-policies-et-azure-roles">Differences entre Azure Policies et Azure Roles</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Policies</th>
+<th style="text-align: center;">Roles</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Utilisé pour assurer la conformité des ressources</td>
+<td style="text-align: center;">Utilisé pour assurer le contrôle d’accès aux ressources</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">L’état de la ressource est il en adéquation avec les règles émises ?</td>
+<td style="text-align: center;">L’utilisateur a t-il le droit d’accéder à cette ressource ?</td>
+</tr>
+</tbody>
+</table>
+<h3 id="differences-entre-azure-ad-roles-et-azure-roles">Differences entre Azure AD Roles et Azure Roles</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">AD Roles</th>
+<th style="text-align: center;">Roles</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Utilisé pour assurer le contrôle d’accès aux ressources de l’AD</td>
+<td style="text-align: center;">Utilisé pour assurer le contrôle d’accès aux ressources</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">AD ressources sont : Utilisateurs / Groupes / Facturation / Licence / Registre d’Application</td>
+<td style="text-align: center;">ressources sont : VM / Databases / Cloud Storage / Cloud Networking</td>
+</tr>
+</tbody>
+</table>
+<h3 id="azure-role-recap">Azure role recap</h3>
+<p>1’27’’ ## Azure Policies ### Définition Mettre en place un standard d’organisation pour la <strong>conformité</strong> ### Azure Policy definition file fichier json qui donne toutes les caractéristiques de la policy et ses règles ## Azure Ressource manager permet de gérer azure ressources. On a également accès à : - subscriptions - management groups - resource groups - resource Providers - Resource locks - Azure blueprints - resource tags - acces Control (IAM) - Role-Based Access Control (RBAC) - Azure policies - ARM template ### Les différents types de scope - <strong>Management group</strong>: un groupe logique de plusieurs subscriptions (exemple de découpage : Entreprise) - <strong>Subscription</strong> : contrat avec Azure pour avoir accès aux services azure (RH, DSI, Marketing) - <strong>Resource group</strong> : un groupement logique de plusieurs ressources (Production, Qualité) - <strong>Resource</strong> ### Resource providers Ensemble des services que propose Microsoft. par exemple microsoft keyvault, microsoft advisor, microsoft data protection, etc ### Resource Tags c’est un couple clef / valeur qui est assigné à une ressource azure. il en existe différents types : - management des ressources - management des coûts et optimisation - management des opérations - Sécurité - Gouvernance et conformité réglementaire - Automatisation ### Resource locks Eviter de supprimer un groupe accidentellement ou le mettre en read-only ### Azure blueprints permet de créer des template de subscription créer avec l’ensemble de son environnement - roles - policies - Azure Resource Manager template - Resource groups ### Bouger des ressources on peut bouger des ressources entre les différents groupes même si le groupe ver lequel on migre est en read-only ### ARM recap 2’06’’ ## ARM Templates ### Infrastructure as Code On va créer des <strong>scripts</strong> qui vont gérer les services cloud pour nous. Ce sont des <strong>fichiers json</strong>. Cela se fait de façon <strong>déclarative</strong> donc on a exactement ce qu’on a défini au contraire d’une déclaration impérative. ## Création de comptes de stockage ### Les differents types de stockage - General purpose v1 - General purpose v2 - BlockBlobStorage - FileStorage - BlobStorage</p>
+<h3 id="les-éléments-du-prix">Les éléments du prix</h3>
+<ul>
+<li><strong>les services supportés</strong> : Blob, File, Queue, Table, Data Lake</li>
+<li><strong>la performance de lecture et d’écriture</strong> : Standard ou premium</li>
+<li><strong>la rapidité d’accès</strong> : Hot, Cool, Archive</li>
+<li><strong>la réplication</strong> : combien de réplication on fait</li>
+<li><strong>le modèle de déploiement</strong></li>
+</ul>
+<h3 id="core-storage-services">Core Storage Services</h3>
+<ul>
+<li><strong>Azure Blob</strong> : Une grosse capacité de stockage et d’adaptabilité de capacité de données. Permet aussi du big data via les Data Lake v2. Utilise des <em>containers</em></li>
+<li><strong>Azure Files</strong> : Gestion de dossier partagés pour cloud et structure on-premises. On crée un protocole de connexion entre un dossier et une application. le dossier joue le role de disque dur et l’application connait son chemin. Permet par exemple de faire un <em>fichier log commun</em> à plusieurs VM.</li>
+<li><strong>Azure Queues</strong> : Base de données NoSQL pour ds données non structurées</li>
+<li><strong>Azure Tables</strong> : Stockage de messages entre applications</li>
+<li><strong>Azure Disks</strong> : Stockage pour VM ### Performances Standard (HDD) / Premium (SSD) ### Rapidité d’accès</li>
+<li>Hot : accès fréquent</li>
+<li>Cool : fréquence tous les 30 jours –&gt; système de back up court terme</li>
+<li>Archive : 180 jours –&gt; back up long terme ### Replications #### Redondance au sein de la région</li>
+<li>redondance locale dans la même availability zone (LRS)</li>
+<li>redondance dans la zone dans 3 AZ différentes (ZRS) #### Redondance dans une autre région</li>
+<li>redondance locale géographique dans la région appairée. trois copies dans 1 AZ de chaque région (GRS)</li>
+<li>idem mais 1 copie dans 3 AZ différentes de chaque région (GZRS) #### Redondance au sein de la région avec accès en lecture On peut lire les replicas contrairement aux autres</li>
+<li>idem précédent mais avec un accès en lecture en plus (RA - GRS)</li>
+<li>idem précédent mais avec un accès en lecture en plus(RA - GZRS) ### Azure File sync Permet de synchroniser ses données on-premises sur le cloud. Sorte de google drive. ### Azure Storage Explorer Facilite le travail avec Azure Storage Data. On peut créer des blob container, télécharger des fichiers, créer des disques, etc ### Azure Import Export Service Permet d’importer de grandes quantité de data dans Azure ### Shared Access Signature Donne un accès temporaire. Par exemple pour AzCopy.</li>
+</ul>
+<h3 id="azure-file-share-déploiement-linux">Azure File Share (déploiement Linux)</h3>
+<ol type="1">
+<li>On crée une machine virtuelle</li>
+<li>On crée un storage account</li>
+<li>On crée un file share dans le strorage account</li>
+<li>On crée sur connect dans le file share et on récupère le code bash pour monter le fichier sur notre VM</li>
+<li>On se connecte à la VM en ssh</li>
+<li>On entre le code ligne par ligne</li>
+<li>Le fichier est monté, le file share est maintenant lié au dossier /mnt/’nom_du_dossier’</li>
+<li>Tous ce qu’on crée dans l’un sera répliqué dans l’autre ### Azure File Share (déploiement Windows)</li>
+<li>On crée une machine virtuelle Windows</li>
+<li>On se connecte en RDP</li>
+<li>On ouvre powershell en admin</li>
+<li>“Install-Module -Name AzureRM -AllowClobber”</li>
+<li>On crée un Sync groups dans Storage Sync Service</li>
+<li>Add cloud end point puis le renseigner</li>
+<li>Installer un Azure file sync agent sur la VM Windows</li>
+<li>On désactive le IE Enhanced Security Configuration dans le local Server pour pouvoir télécharger facilement l’agent</li>
+<li>On tape sur internet Azure file sync agent dowload et on télécharge la bonne version</li>
+<li>On lance l’agent Azure et on le connecte à notre compte microsoft, notre subscription, notre resource Group et notre Storage sync service</li>
+<li>On crée un dossier sur notre VM, on modifie ses propriétés –&gt; Sharing –&gt; Share –&gt; azureuser –&gt; Share</li>
+<li>Dans le Sync Groups, Add Server endpoint, on entre le nom du serveur et le chemin ### Storage Account recap 3’54&quot;</li>
+</ol>
+<footer>
+  @copyright Robin Couturier
+</footer>
+</body>
+</html>

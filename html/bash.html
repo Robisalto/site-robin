@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>bash</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="link/test.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<nav id="TOC">
+<ul>
+<li><a href="#naviguer-dans-un-système-de-fichier">Naviguer dans un système de fichier</a><ul>
+<li><a href="#cd-change-directory">cd (Change directory)</a></li>
+<li><a href="#touch">Touch</a></li>
+<li><a href="#ps-process-status">ps (Process Status)</a></li>
+</ul></li>
+<li><a href="#les-permissions">Les permissions</a><ul>
+<li><a href="#fonctionnement-des-permissions">Fonctionnement des permissions</a><ul>
+<li><a href="#propriétaires">Propriétaires</a></li>
+</ul></li>
+<li><a href="#modifier-les-permissions-chown-change-owner">Modifier les permissions chown (change owner)</a><ul>
+<li><a href="#rendre-un-fichier-exécutable">Rendre un fichier exécutable</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#les-access-control-lists-acl">Les Access Control Lists` (ACL)</a><ul>
+<li><a href="#getfacl">getfacl</a></li>
+<li><a href="#setfacl">setfacl</a><ul>
+<li><a href="#autoriser-à-utilisateur-la-lecture-et-lécriture-sur-fichier">autoriser à “utilisateur” la lecture et l’écriture sur “fichier”</a></li>
+<li><a href="#modifier-les-permissions-de-plusieurs-utilisateursgroupes-sur-fichier-en-même-temps">modifier les permissions de plusieurs utilisateurs/groupes sur “fichier” en même temps</a></li>
+<li><a href="#définir-laccès-en-lecture-par-défaut-pour-utilisateur-pour-les-nouveaux-fichiers-créés-dans-dossier">définir l’accès en lecture par défaut pour “utilisateur” pour les nouveaux fichiers créés dans “dossier”</a></li>
+<li><a href="#supprimer-les-acl-pour-un-utilisateur-sur-une-arborescence">supprimer les ACL pour un utilisateur sur une arborescence</a></li>
+<li><a href="#supprimer-les-acl-sur-un-fichierdossier">supprimer les ACL sur un fichier/dossier</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#les-alias">Les Alias</a><ul>
+<li><a href="#configurer-les-alias">Configurer les Alias</a><ul>
+<li><a href="#dans-le-.bashrc">Dans le ~/.bashrc</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#variables-denvironnement">Variables d’environnement</a><ul>
+<li><a href="#afficher-les-variables-denvironnement">Afficher les variables d’environnement</a></li>
+<li><a href="#recherche-de-commandes">Recherche de commandes</a></li>
+<li><a href="#ecriture-et-affichage-dun-fichier">Ecriture et affichage d’un fichier</a></li>
+</ul></li>
+<li><a href="#gestion-des-liens-symboliques">Gestion des liens symboliques</a><ul>
+<li><a href="#création">Création</a></li>
+<li><a href="#avec-les-dossiers">Avec les dossiers</a></li>
+</ul></li>
+<li><a href="#gestion-des-utilisateurs">Gestion des utilisateurs</a><ul>
+<li><a href="#création-dutilisateurs-et-de-groupes">Création d’utilisateurs et de groupes</a><ul>
+<li><a href="#ajouter-un-utilisateur-à-un-groupe">Ajouter un utilisateur à un groupe</a></li>
+</ul></li>
+<li><a href="#afficher-la-liste-des-utilisateurs">Afficher la liste des utilisateurs</a></li>
+<li><a href="#afficher-la-liste-des-groupes">Afficher la liste des groupes</a></li>
+</ul></li>
+<li><a href="#les-redirections">Les redirections</a><ul>
+<li><a href="#la-sortie-derreur">La sortie d’erreur</a></li>
+<li><a href="#le-dossier-devnull">le dossier /dev/null</a></li>
+<li><a href="#redirections">Redirections</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="naviguer-dans-un-système-de-fichier">Naviguer dans un système de fichier</h1>
+<h2 id="cd-change-directory">cd (Change directory)</h2>
+<pre><code>cd / </code></pre>
+<p>Va dans le repertoire racine ## ls (Liste)</p>
+<pre><code>ls </code></pre>
+<p>Donne juste les repertoires et fichiers du dossier courant</p>
+<pre><code>ls -l </code></pre>
+<p>Donne juste les repertoires et fichiers du dossier courant avec les permissions, propriétaires, tailles et dates de modification</p>
+<pre><code>ls -R</code></pre>
+<p>Donne juste les repertoires et fichiers du dossier courant de façon récursive ## Tree</p>
+<pre><code>tree</code></pre>
+<p>Donne une arborescence visuelle ## Mkdir</p>
+<pre><code>mkdir directory</code></pre>
+<p>Créé un répertoire dans le dossier courant</p>
+<pre><code>mkdir -p dir1/dir2 dir1/dir3</code></pre>
+<h2 id="touch">Touch</h2>
+<pre><code>touch test</code></pre>
+<p>Créer un fichier test dans le répertoire courant ## Man</p>
+<pre><code>man rm
+man cp
+man mv</code></pre>
+<h2 id="ps-process-status">ps (Process Status)</h2>
+<pre><code>ps</code></pre>
+<p>Liste les processus actifs ## Option rm (Remove)</p>
+<pre><code>rm</code></pre>
+<p>permet de supprimer un fichier</p>
+<pre><code>rm -r</code></pre>
+<p>De façon recursive. Avec un R supprime aussi les fichiers cachés</p>
+<pre><code>rm -f </code></pre>
+<p>De façon forcé ## Option cp (Copy)</p>
+<pre><code>cp fichie_copié dossier_de_destination </code></pre>
+<pre><code>cp - r dossier_de_depart dossier_de_destination </code></pre>
+<h1 id="les-permissions">Les permissions</h1>
+<h2 id="fonctionnement-des-permissions">Fonctionnement des permissions</h2>
+<p>Lorsque que l’on fait un ls -l, une suite de 10 caractères apparaissent en début de ligne ### Premier caractère - <strong>-</strong> : fichier classique</p>
+<ul>
+<li><p><strong>d</strong> : répertoire</p></li>
+<li><p><strong>l</strong> : lien symbolique</p></li>
+<li><p><strong>c</strong> : périphérique de type caractère</p></li>
+<li><p><strong>b</strong> : périphérique de type bloc</p></li>
+<li><p><strong>p</strong> : pipe (FIFO) “tube” ou “tuyau” en anglais ou pipeline aussi en français</p></li>
+<li><strong>s</strong> : socket ### Caractérisation</li>
+<li><strong>r</strong> signifie en lecture</li>
+<li><strong>w</strong> en écriture</li>
+<li><p><strong>x</strong> en éxécution</p></li>
+</ul>
+<blockquote>
+<p>le premier groupe designe le <strong>user</strong> u le deuxième le <strong>groupe</strong> g le troisième les <strong>other</strong> o</p>
+</blockquote>
+<h3 id="propriétaires">Propriétaires</h3>
+<blockquote>
+<p>le premier nom designe le user propriétaire le deuxième nom désigne le groupe propriétaire le troisième correspond à la taille du fichier</p>
+</blockquote>
+<h2 id="modifier-les-permissions-chown-change-owner">Modifier les permissions chown (change owner)</h2>
+<pre><code>sudo chown robin fichier1</code></pre>
+<p>Permet de changer le propriétaire du fichier</p>
+<pre><code>sudo chown robin:group2 fichier1</code></pre>
+<p>Change le propriétaire et le groupe</p>
+<pre><code>sudo chown :group2 fichier1</code></pre>
+<p>Si seul le groupe doit être changé</p>
+<pre><code>sudo chown robin /dir1</code></pre>
+<p>Change le propriétaire du répertoire</p>
+<pre><code>sudo chown -R robin /dir1</code></pre>
+<p>Change le propriétaire du répertoire de façon récursive ## Modification des droits avec chmod (Change Mode)</p>
+<pre><code>chmod [u/g/o] [-/+] [r/w/x] nom_du_fichier</code></pre>
+<p>On peut aussi utiliser la topologie suivante : - 0 : <strong><code>- - -</code></strong> (aucun droit)</p>
+<ul>
+<li><p>1 : <strong><code>- - x</code></strong> (exécution)</p></li>
+<li><p>2 : <strong><code>- w -</code></strong> (écriture)</p></li>
+<li><p>3 : <strong><code>- w x</code></strong> (écriture et exécution)</p></li>
+<li><p>4 : <strong><code>r - -</code></strong> (lecture seule)</p></li>
+<li><p>5 : <strong><code>r - x</code></strong> (lecture et exécution)</p></li>
+<li><p>6 : <strong><code>r w -</code></strong> (lecture et écriture)</p></li>
+<li>7 : <strong><code>r w x</code></strong> (lecture, écriture et exécution)</li>
+</ul>
+<pre><code>  chmod -R 750 monRépertoire</code></pre>
+<p>Donnera de façon récursive tous les droits à l’utilisateur , juste lecture et exécution au groupe et aucun droit aux autres</p>
+<h3 id="rendre-un-fichier-exécutable">Rendre un fichier exécutable</h3>
+<pre><code>chmod +x prog</code></pre>
+<p>L’éxecuter</p>
+<pre><code>./prog</code></pre>
+<h1 id="les-access-control-lists-acl">Les Access Control Lists` (ACL)</h1>
+<blockquote>
+<p>Par défaut, la gestion des droits sous Linux est relativement basique (bien que souvent suffisante). En effet, il n’est possible de permettre ou d’interdire la lecture, l’écriture et l’exécution de fichiers que pour trois catégories d’utilisateurs : le propriétaire du fichier, le groupe auquel appartient le propriétaire et le reste du monde. Cette gestion des droits permet de configurer les accès aux fichiers dans la plupart des situations simples mais peut s’avérer limitée, par exemple, dans un contexte où plusieurs utilisateurs doivent accéder à une ressource partagée alors qu’ils n’ont pas de groupe commun.</p>
+</blockquote>
+<p>L’installation du paquet <code>acl</code> est nécessaire car elle n’est pas toujours présente nativement sur ubuntu</p>
+<p><strong>Sous Debian et dérivés:</strong></p>
+<pre><code>sudo apt-get update &amp;&amp; sudo apt-get install acl</code></pre>
+<p>les deux commandes suivantes sont équivalentes :</p>
+<pre><code>chmod u=rw fichier
+
+setfacl -m u::rw fichier</code></pre>
+<h2 id="getfacl">getfacl</h2>
+<pre><code>$ getfacl fichier</code></pre>
+<blockquote>
+<p>file: fichier owner: utilisateur group: utilisateur user::rwx user:utilisateur1:rw- user:utilisateur2:r– group::r– mask::rwx other::—</p>
+</blockquote>
+<h2 id="setfacl">setfacl</h2>
+<h3 id="autoriser-à-utilisateur-la-lecture-et-lécriture-sur-fichier">autoriser à “utilisateur” la lecture et l’écriture sur “fichier”</h3>
+<pre><code>setfacl -m user:utilisateur:rw fichier
+
+setfacl -m u:utilisateur:rw fichier</code></pre>
+<p>La même commande est disponible pour les groupes. Il suffit de remplacer <strong>u</strong>/<strong>user</strong> par <strong>g</strong> ou <strong>group</strong></p>
+<h3 id="modifier-les-permissions-de-plusieurs-utilisateursgroupes-sur-fichier-en-même-temps">modifier les permissions de plusieurs utilisateurs/groupes sur “fichier” en même temps</h3>
+<pre><code>setfacl -m user:utilisateur:rwx,user:utilisateur2:r,group:groupe:rw fichier</code></pre>
+<h3 id="définir-laccès-en-lecture-par-défaut-pour-utilisateur-pour-les-nouveaux-fichiers-créés-dans-dossier">définir l’accès en lecture par défaut pour “utilisateur” pour les nouveaux fichiers créés dans “dossier”</h3>
+<pre><code>setfacl -m d:u:utilisateur:r dossier</code></pre>
+<h3 id="supprimer-les-acl-pour-un-utilisateur-sur-une-arborescence">supprimer les ACL pour un utilisateur sur une arborescence</h3>
+<pre><code>setfacl -R -x user::nom_user repertoire_base_arborescence</code></pre>
+<h3 id="supprimer-les-acl-sur-un-fichierdossier">supprimer les ACL sur un fichier/dossier</h3>
+<pre><code>setfacl -b fichier</code></pre>
+<h1 id="les-alias">Les Alias</h1>
+<pre><code>$ alias cd=ls</code></pre>
+<p>cd devient ls</p>
+<pre><code>$ unalias cd</code></pre>
+<h2 id="configurer-les-alias">Configurer les Alias</h2>
+<h3 id="dans-le-.bashrc">Dans le ~/.bashrc</h3>
+<pre><code>    alias ll=&#39;ls&#39;</code></pre>
+<p>Entrer les alias que l’on souhaite garder Pour que les modification de ce fichier soient prises en compte</p>
+<pre><code>. ~/.bashrc</code></pre>
+<h1 id="variables-denvironnement">Variables d’environnement</h1>
+<h2 id="afficher-les-variables-denvironnement">Afficher les variables d’environnement</h2>
+<pre><code>printenv</code></pre>
+<p>Affiche toutes les variables d’environnement</p>
+<pre><code>set</code></pre>
+<p>Affiche toutes les variables d’environnement définies ## Afficher les variables d’environnement locales</p>
+<pre><code>locale -a C</code></pre>
+<p>Affiche toutes les variables d’environnement locales</p>
+<p>Voici une description des autres variables d’environnement :</p>
+<ul>
+<li><code>SHELL</code> : le type du shell utilisé</li>
+<li><code>USER</code> : l’utilisateur actuel</li>
+<li><code>PWD</code> : le répertoire courant</li>
+<li><code>PATH</code> : les chemins de recherche des exécutables</li>
+</ul>
+<p>On peut afficher une variable en utilisant la commande <code>echo</code>. Exemple:</p>
+<pre><code>$ echo $SHELL
+/bin/bash</code></pre>
+<h2 id="recherche-de-commandes">Recherche de commandes</h2>
+<p>Quand vous tapez une commande (par exemple la commande <code>toto</code>), le shell :</p>
+<ol type="1">
+<li>analyse la variable <code>PATH</code>,</li>
+<li>vérifie pour chaque répertoire listé dans <code>PATH</code> si un fichier exécutable nommmé <code>toto</code> existe (dans l’ordre des répertoires spécifiés)</li>
+<li>exécute le programme <code>toto</code> qu’il a éventuellement trouvé.</li>
+</ol>
+<p>Ici, le shell essaye de trouver <code>toto</code> dans <code>/usr/local/bin</code>, si la commande s’y trouve, alors il exécute cette commande. Sinon, il recherche dans le répertoire <code>/usr/bin</code> (puis les suivants) jusqu’à ce qu’il ait trouvé la commande <code>toto</code>, ou qu’il ait épuisé tous les répertoires. Si à la fin de la recherche, il n’a pas trouvé la commande alors il affiche :</p>
+<pre><code>$ toto
+-bash: toto: command not found
+$</code></pre>
+<p>Ce qui signifie qu’il n’a pas trouvé cette commande dans les répertoires du <code>PATH</code>. Pour modifier le chemin de recherche, il faut modifier la variable <code>PATH</code>, comme suit :</p>
+<pre><code>$ export PATH=${PATH}:/un/nouveau/chemin:/un/autre/chemin
+$</code></pre>
+<p>Vous pouvez connaître la commande qui est exécutée avec la commande <code>which</code>. Ici le shell vous indique que la commande <code>ls</code> se trouve dans le répertoire <code>/bin</code></p>
+<pre><code>$ which ls
+/bin/ls
+$</code></pre>
+<h2 id="ecriture-et-affichage-dun-fichier">Ecriture et affichage d’un fichier</h2>
+<p>L’affichage d’un fichier se fait via deux commandes intéressantes:</p>
+<ul>
+<li><code>cat NOM_DU_FICHIER</code></li>
+<li><code>less NOM_DU_FICHIER</code> # Liens symboliques # Introduction</li>
+</ul>
+<p>Le lien symbolique est un raccourci au niveau du système de fichier.</p>
+<p>Il permet de définir un fichier fictif pointant vers un fichier situé dans un autre emplacement du système de fichiers.</p>
+<h1 id="gestion-des-liens-symboliques">Gestion des liens symboliques</h1>
+<h2 id="création">Création</h2>
+<p>La création se fait via la commande <code>ln -s</code>.</p>
+<pre><code>ln -s cibleDuLien [nomDuLien]</code></pre>
+<p>Le nom du lien, s’il est omis, sera le nom du fichier</p>
+<blockquote>
+<p>Lorsque l’on créé un lien symbolique et que l’on fait un ls -l. un l apparaît en début de ligne</p>
+</blockquote>
+<h2 id="avec-les-dossiers">Avec les dossiers</h2>
+<p>Il est possible de créer un lien symbolique vers un dossier :</p>
+<pre><code>ln -s dossierCible lienVersLeDossier</code></pre>
+<h1 id="gestion-des-utilisateurs">Gestion des utilisateurs</h1>
+<h2 id="création-dutilisateurs-et-de-groupes">Création d’utilisateurs et de groupes</h2>
+<p>Les commandes pour gérer des utilisateurs sous Debian sont :</p>
+<ul>
+<li><code>adduser</code></li>
+<li><code>addgroup</code></li>
+<li><code>deluser</code></li>
+<li><code>delgroup</code></li>
+</ul>
+<p>D’autres commandes existent comme <code>useradd</code> ou <code>groupdel</code> mais elles sont moins pratiques à utiliser. ## Ajouter un utilisateur</p>
+<pre><code>sudo adduser robin </code></pre>
+<h3 id="ajouter-un-utilisateur-à-un-groupe">Ajouter un utilisateur à un groupe</h3>
+<pre><code>sudo adduser robin group_ajout</code></pre>
+<pre><code>usermod -aG group user</code></pre>
+<h4 id="vérifier-que-le-transfert-a-bien-été-fait">Vérifier que le transfert a bien été fait</h4>
+<pre><code>id robin</code></pre>
+<h2 id="afficher-la-liste-des-utilisateurs">Afficher la liste des utilisateurs</h2>
+<pre><code>cat /etc/passwd</code></pre>
+<h2 id="afficher-la-liste-des-groupes">Afficher la liste des groupes</h2>
+<pre><code>cat /etc/group</code></pre>
+<h1 id="les-redirections">Les redirections</h1>
+<p>Le caractère <code>&gt;</code> redirige la sortie de la commande qui le précède vers un fichier.</p>
+<pre><code>echo Bonjour le monde &gt; bonjour.txt</code></pre>
+<pre><code>cat bonjour.txt</code></pre>
+<blockquote>
+<p>Bonjour le monde</p>
+</blockquote>
+<h2 id="la-sortie-derreur">La sortie d’erreur</h2>
+<p>Lorsqu’une erreur apparaît, c’est en fait une redirection vers un fichier d’erreur</p>
+<h2 id="le-dossier-devnull">le dossier /dev/null</h2>
+<p>Ce dossier est une sorte de trou noir. Si on redirige quelque chose vers lui, les données seront supprimées ## Ajouter du contenu dans un fichier</p>
+<pre><code>echo &#39;# A propos&#39; &gt; README.md
+echo &#39;Je suis un fichier informatif&#39; &gt;&gt; README.md
+echo &#39;Ma création a été réalisée en plusieurs opérations&#39; &gt;&gt; README.md</code></pre>
+<h2 id="redirections">Redirections</h2>
+<pre><code>blabla &gt; test.txt</code></pre>
+<p>Ecrase dans le fichier</p>
+<pre><code>blabla &gt;&gt; test.txt</code></pre>
+<p>Met à la suite dans le fichier</p>
+<footer>
+  @copyright Robin Couturier
+</footer>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Ansible</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="link/test.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<nav id="TOC">
+<ul>
+<li><a href="#les-différents-types-de-cloud">Les différents types de Cloud</a></li>
+<li><a href="#comment-on-gère-le-cloud">Comment on gère le Cloud</a><ul>
+<li><a href="#infra-as-code">Infra as Code</a></li>
+<li><a href="#automatisation-de-la-gestion-des-serveurs">Automatisation de la gestion des serveurs</a></li>
+<li><a href="#différence-entre-ansible-et-terraform">Différence entre Ansible et Terraform</a></li>
+<li><a href="#exécuter-des-commandes">Exécuter des commandes</a></li>
+</ul></li>
+<li><a href="#définition-des-rôle">Définition des Rôle</a><ul>
+<li><a href="#créer-un-template-de-role">Créer un template de role</a></li>
+<li><a href="#créer-un-fichier-playbook.yml">Créer un fichier playbook.yml</a></li>
+</ul></li>
+<li><a href="#remplir-le-role">Remplir le role</a><ul>
+<li><a href="#remplir-le-fichier-tasks-main.yml">Remplir le fichier tasks/ main.yml</a><ul>
+<li><a href="#installer-terraform">Installer Terraform</a></li>
+</ul></li>
+<li><a href="#remplir-le-fichier-varsdefault.yml">Remplir le fichier vars/default.yml</a></li>
+</ul></li>
+<li><a href="#configuration-du-fichier-inventory">Configuration du fichier inventory</a></li>
+<li><a href="#lancer-le-playbook">Lancer le playbook</a></li>
+</ul>
+</nav>
+<h1 id="les-différents-types-de-cloud">Les différents types de Cloud</h1>
+<p>Azure (Microsoft), Google, Alibaba, OVH, AWS</p>
+<p>Offre des services managés :</p>
+<blockquote>
+<ul>
+<li>Calcul</li>
+<li>Réseau</li>
+<li>Stockage</li>
+<li>IA</li>
+</ul>
+</blockquote>
+<h1 id="comment-on-gère-le-cloud">Comment on gère le Cloud</h1>
+<h2 id="infra-as-code">Infra as Code</h2>
+<blockquote>
+<p>Aussi nommée <strong>infrastructure</strong> programmable, l’<strong>infrastructure as code</strong> (IaC) est une démarche qui vise à configurer une <strong>infrastructure</strong> informatique (virtuelle), d’une façon similaire à une programmation de logiciel, en utilisant des fichiers descripteurs et des <strong>codes</strong></p>
+</blockquote>
+<blockquote>
+<p>exemple : Terraform Permet de configurer des services Amazon par exemple. Je veux installer une VM sur Amazon, au lieu de tout faire à la fin sur le site AWS, je fais un fichier de config avec tout ce dont j’ai besoin. On peut utiliser <strong>brainboard</strong> pour pouvoir créer des fichiers de config Terraform</p>
+</blockquote>
+<blockquote>
+<p><strong>Terraform</strong> est un environnement logiciel d’infrastructure as code publié en open-source par la société HashiCorp. Cet outil permet d’automatiser la construction des ressources d’une infrastructure de centre de données comme un réseau, des machines virtuelles , un groupe de sécurité ou une base de données.</p>
+</blockquote>
+<h2 id="automatisation-de-la-gestion-des-serveurs">Automatisation de la gestion des serveurs</h2>
+<p>exemple : <strong>Ansible</strong></p>
+<p>Utilise <strong>ssh et python</strong> pour faire des actions sur les machines cibles Il est utilisable sur cloud public, cloud privé, serveur physique etc..</p>
+<p>Ansible est de type <strong>déclaratif</strong></p>
+<p>On l’utilise que sur des <strong>process standardisés</strong></p>
+<p>Il est couplé à <strong>git</strong> pour la gestion de configuration</p>
+<h2 id="différence-entre-ansible-et-terraform">Différence entre Ansible et Terraform</h2>
+<blockquote>
+<p>Ansible et Terraform sont AgentLess. C’est à dire qu’ils utilisent des connexion ssh sans avoir à installer auparavant des daemon comme puppet-agent par exemple servant à faire de la gestion de configuration de serveur esclave</p>
+</blockquote>
+<blockquote>
+<p>Cependant Terraform est Statefull tandis que Ansible est Stateless. Donc Terraform va être capable de stocker des données sur la configuration des serveurs et ce qui a été installé ce qui n’est pas le cas d’Ansible</p>
+</blockquote>
+<blockquote>
+<p>On va donc utiliser <strong>Terraform</strong> pour <strong>créer les serveurs</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>Ansible</strong> pour les <strong>configurer</strong></p>
+<h1 id="commandes-de-base-ansible">Commandes de base Ansible</h1>
+<h2 id="installer-ansible">Installer Ansible</h2>
+</blockquote>
+<pre><code>sudo apt install ansible </code></pre>
+<h2 id="exécuter-des-commandes">Exécuter des commandes</h2>
+<pre><code>ansible group1 -i myhosts -m command -a date</code></pre>
+<p>Récupère la date sur le serveur distant</p>
+<p>Créer un fichier playbook.yml</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode yaml"><code class="sourceCode yaml"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">-</span> <span class="fu">hosts:</span><span class="at"> host01 become: true tasks: - name: ensure latest sysstat is installed apt: name: sysstat state: latest</span></a></code></pre></div>
+<ul>
+<li><code>hosts: host</code> tells Ansible to run the tasks on the host <em>host</em></li>
+<li><code>become: true</code> makes all your tasks run as <code>sudo</code></li>
+<li><code>- name:</code> is basically a comment, describing what the task does</li>
+<li><code>apt:</code> specifies the module we want to use</li>
+<li><code>name:</code> is an argument to the <code>apt</code> module, that specifies the name of the package to install.</li>
+</ul>
+<h1 id="définition-des-rôle">Définition des Rôle</h1>
+<h2 id="créer-un-template-de-role">Créer un template de role</h2>
+<p>On peut lancer des rôles spécifiques Dans un dossier roles, on va créer un template de role</p>
+<pre><code>ansible-galaxy role init installDocker</code></pre>
+<h2 id="créer-un-fichier-playbook.yml">Créer un fichier playbook.yml</h2>
+<blockquote>
+<p>C’est le fichier principal qui va exécuter les commandes ansible</p>
+</blockquote>
+<pre><code>touch playbook.yml</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode yaml"><code class="sourceCode yaml"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">-</span> <span class="fu">hosts:</span><span class="at"> all  </span></a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="fu">gather_facts:</span><span class="at"> </span><span class="ch">no</span><span class="at">  </span></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="fu">become:</span><span class="at"> </span><span class="ch">true</span><span class="at">  </span></a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="fu">roles:</span><span class="at">  </span></a>
+<a class="sourceLine" id="cb6-5" title="5"><span class="kw">-</span> installDocker</a></code></pre></div>
+<ul>
+<li>gather_facts : est-ce que l’on souhaite stocker des données</li>
+<li>become : est-ce qu’on souhaite se placer en mode sudo</li>
+</ul>
+<h1 id="remplir-le-role">Remplir le role</h1>
+<h2 id="remplir-le-fichier-tasks-main.yml">Remplir le fichier tasks/ main.yml</h2>
+<p>Dans le dossier tasks/main.yml on met nos commandes que l’on souhaite exécuter lorsque l’on appelle le role Si on souhaite installer Docker par exemple ### Installer Docker</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode yaml"><code class="sourceCode yaml"><a class="sourceLine" id="cb7-1" title="1">  <span class="kw">-</span> <span class="fu">name:</span><span class="at"> Install required system packages</span></a>
+<a class="sourceLine" id="cb7-2" title="2">      <span class="fu">apt:</span><span class="at"> name={{ item }} state=latest update_cache=yes</span></a>
+<a class="sourceLine" id="cb7-3" title="3">      <span class="fu">loop:</span><span class="at"> </span><span class="kw">[</span> <span class="st">&#39;apt-transport-https&#39;</span><span class="kw">,</span> <span class="st">&#39;ca-certificates&#39;</span><span class="kw">,</span> <span class="st">&#39;curl&#39;</span><span class="kw">,</span> <span class="st">&#39;software-properties-common&#39;</span><span class="kw">,</span> <span class="st">&#39;python3-pip&#39;</span><span class="kw">,</span> <span class="st">&#39;virtualenv&#39;</span><span class="kw">,</span> <span class="st">&#39;python3-setuptools&#39;</span><span class="kw">]</span></a>
+<a class="sourceLine" id="cb7-4" title="4">  <span class="kw">-</span> <span class="fu">name:</span><span class="at"> Add Docker GPG apt Key</span></a>
+<a class="sourceLine" id="cb7-5" title="5">      <span class="fu">apt_key:</span></a>
+<a class="sourceLine" id="cb7-6" title="6">        <span class="fu">url:</span><span class="at"> https://download.docker.com/linux/ubuntu/gpg</span></a>
+<a class="sourceLine" id="cb7-7" title="7">        <span class="fu">state:</span><span class="at"> present</span></a>
+<a class="sourceLine" id="cb7-8" title="8">  <span class="kw">-</span> <span class="fu">name:</span><span class="at"> Add Docker Repository</span></a>
+<a class="sourceLine" id="cb7-9" title="9">      <span class="fu">apt_repository:</span></a>
+<a class="sourceLine" id="cb7-10" title="10">        <span class="fu">repo:</span><span class="at"> deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable</span></a>
+<a class="sourceLine" id="cb7-11" title="11">        <span class="fu">state:</span><span class="at"> present</span></a>
+<a class="sourceLine" id="cb7-12" title="12">  <span class="kw">-</span> <span class="fu">name:</span><span class="at"> Update apt and install docker-ce</span></a>
+<a class="sourceLine" id="cb7-13" title="13">      <span class="fu">apt:</span><span class="at"> update_cache=yes name=docker-ce state=latest</span></a>
+<a class="sourceLine" id="cb7-14" title="14">  <span class="kw">-</span> <span class="fu">name:</span><span class="at"> Install Docker Module for Python</span></a>
+<a class="sourceLine" id="cb7-15" title="15">      <span class="fu">pip:</span><span class="at"> name: docker</span></a></code></pre></div>
+<h3 id="installer-terraform">Installer Terraform</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode yaml"><code class="sourceCode yaml"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">-</span> <span class="fu">name:</span><span class="at"> Add Terraform gpg Key</span></a>
+<a class="sourceLine" id="cb8-2" title="2">  <span class="fu">apt_key:</span></a>
+<a class="sourceLine" id="cb8-3" title="3">    <span class="fu">url:</span><span class="at"> https://apt.releases.hashicorp.com/gpg</span></a>
+<a class="sourceLine" id="cb8-4" title="4">    <span class="fu">state:</span><span class="at"> present</span></a>
+<a class="sourceLine" id="cb8-5" title="5"></a>
+<a class="sourceLine" id="cb8-6" title="6"><span class="kw">-</span> <span class="fu">name:</span><span class="at"> Add Terraform Repository</span></a>
+<a class="sourceLine" id="cb8-7" title="7">  <span class="fu">apt_repository:</span></a>
+<a class="sourceLine" id="cb8-8" title="8">    <span class="fu">repo:</span><span class="at"> deb [arch=amd64] https://apt.releases.hashicorp.com focal main</span></a>
+<a class="sourceLine" id="cb8-9" title="9">    <span class="fu">state:</span><span class="at"> present</span></a>
+<a class="sourceLine" id="cb8-10" title="10"></a>
+<a class="sourceLine" id="cb8-11" title="11"><span class="kw">-</span> <span class="fu">name:</span><span class="at"> Update and install terraform</span></a>
+<a class="sourceLine" id="cb8-12" title="12">  <span class="fu">apt:</span></a>
+<a class="sourceLine" id="cb8-13" title="13">    <span class="fu">name:</span><span class="at"> terraform</span></a>
+<a class="sourceLine" id="cb8-14" title="14">    <span class="fu">state:</span><span class="at"> present</span></a>
+<a class="sourceLine" id="cb8-15" title="15">    <span class="fu">update_cache:</span><span class="at"> </span><span class="ch">yes</span></a></code></pre></div>
+<h2 id="remplir-le-fichier-varsdefault.yml">Remplir le fichier vars/default.yml</h2>
+<p>On peut ajouter un fichier vars_files dans le fichier playbook.yml</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode yaml"><code class="sourceCode yaml"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">-</span> <span class="fu">hosts:</span><span class="at"> all</span></a>
+<a class="sourceLine" id="cb9-2" title="2">  <span class="fu">become:</span><span class="at"> </span><span class="ch">true</span></a>
+<a class="sourceLine" id="cb9-3" title="3">  <span class="fu">vars_files:</span></a>
+<a class="sourceLine" id="cb9-4" title="4">    <span class="kw">-</span> vars/default.yml</a></code></pre></div>
+<p>Dans le fichier default.yml</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode yaml"><code class="sourceCode yaml"><a class="sourceLine" id="cb10-1" title="1"><span class="fu">create_containers:</span><span class="at"> </span><span class="dv">4</span></a>
+<a class="sourceLine" id="cb10-2" title="2"><span class="fu">default_container_name:</span><span class="at"> docker</span></a>
+<a class="sourceLine" id="cb10-3" title="3"><span class="fu">default_container_image:</span><span class="at"> ubuntu</span></a>
+<a class="sourceLine" id="cb10-4" title="4"><span class="fu">default_container_command:</span><span class="at"> sleep 1d</span></a></code></pre></div>
+<p>Lancer une commande ansible</p>
+<pre><code>ansible-playbook playbook.yml </code></pre>
+<p>-l localhost : adresseIP -u local : user -K : utilise le password par défaut</p>
+<h1 id="configuration-du-fichier-inventory">Configuration du fichier inventory</h1>
+<blockquote>
+<p>Le fichier inventory permet de définir les groupes avec les informations nécessaires à la connexion ssh</p>
+</blockquote>
+<ul>
+<li>nom de l’adresse IP définie par le DNS</li>
+<li>nom de l’utilisateur</li>
+<li>mot de passe de l’utilisateur</li>
+</ul>
+<pre><code>[group]
+nom_de_domaine ou adresse ip
+[group:vars]
+ansible_ssh_user = student 
+ansible_ssh_password = student 
+ansible_ssh_port = numéro de port
+ansible_become_password = password root
+ansible_become_user = user root
+ansible_become_port = numéro du port</code></pre>
+<h1 id="lancer-le-playbook">Lancer le playbook</h1>
+<pre><code>ansible-playbook playbook.yml</code></pre>
+<pre><code>ansible-playbook playbook.yml -i inventory</code></pre>
+<p>Utilise un fichier inventory spécifique</p>
+<pre><code>ansible-playbook playbook.yml -l user </code></pre>
+<p>sur un user spécifique</p>
+<footer>
+  @copyright Robin Couturier
+</footer>
+</body>
+</html>
