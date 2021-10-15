@@ -1,7 +1,5 @@
-Analyse technique
 Ansible
 Apache2
-Bourse stratégie long terme
 Docker
 ITIL
 Terraform

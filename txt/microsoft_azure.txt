@@ -404,3 +404,228 @@ Donne un accès temporaire. Par exemple pour AzCopy.
 12. Dans le Sync Groups, Add Server endpoint, on entre le nom du serveur et le chemin
 ### Storage Account recap 
 3'54"
+## VM
+### Généralité 
+Un Machine virtuelle est un serveur configurable : 
+La taille de la VM est déterminée par l'image qui est définie par : 
+- vCPU
+- Memory
+- Storage Capacity 
+### Ce qui est crée au lancement d'une instance de VM
+#### Network Security Group
+Parefeu virtuel avec des règles autour des ports et des protocoles
+#### Network Interface
+Un outil qui gére les protocoles IP et les communication réseau en fonction des règles du NSG
+#### Virtual Machine Instance
+Le serveur est fonctionnement 
+#### Public IP address
+L'adresse publique de notre VM
+#### Virtual Network VNet
+Le réseau dans lequel notre VM est placée
+### Tailles de disques 
+#### General Purposes
+- ratio moyen entre le CPU et la mémore
+- petite et moyenne base de données
+- petit à moyen traffic web
+- taille : B à Ddsv4
+#### Compute Optimized 
+- haut ratio CPU/mémoire
+- traffic web moyen
+- appareils réseau, deploiement de batch, applications serveur
+- taille : F, FS2
+#### Memory Optimized 
+- haut ratio CPU/mémoire
+- serveur de base de données relationnelles 
+- Analyse de données 
+- taille : Esv3 à Edsv4, Mv2,M, Dsv2, Dv2
+#### Storage  Optimized 
+- Big Data, SQL, NoSQL, date warehousing et les gros échanges de données
+- taille : Lsv2
+#### GPU 
+- Edition de graphiques et de vidéos, deep learning
+- taille : NC, ND, NV
+#### High performance compute 
+- Plus puissant de tous les processeurs
+- taille : HB, HC, H
+### Azure Compute Unit
+Permet de comparer les CPU performance des VM citées précédemment. Donne un score ACU / vCPU. Plus le score est élevé plus la performance est forte.
+### Azure Mobile App 
+Permet de gérer ses VM depuis son téléphone et effectué des actions basiques 
+### Gen1 vs Gen2
+Gen1 : basée sur le BIOS
+Gen2 : basée sur UEFI
+### Se connecter à une VM 
+#### SSH
+Protocole qui permet d'établir la connexion entre un client et un serveur via un terminal. Via port 22 en TCP.
+
+Ensuite on se connecte comme n'importe quel connexion SSH via son agent putty par exemple.
+
+Si on veut générer une clef on peut le faire. On télécharge la clef RSA, on la stocke dans un dossier local puis on se connecte de la manière suivante 
+````
+ssh -i chemin_de_la_clef user@ip
+````
+#### RDP (Remote desktop Protocol)
+On se connecte via une interface graphique. Via pot 3389 en TCP et UDP.
+> Attention, lors de la vérification de sécurité Windows il faut entrer se loger avec l'admin et le MP entrés lors de la création de la VM sur Azure 
+#### Bastion
+C'est un service qu'on déploie pour accéder à notre machine via le navigateur et le portail azure. Il procure une connexion sans RDP ou SSH. 
+On ouvre alors une nouvelle page du navigateur qui permet d'accéder à la machine virtuelle. Pratique sur des chromebook par exemple.
+## Mettre en place des Logs 
+
+### Lors de la création de la VM
+Lorsque l'on crée la VM, l'icône management permet mettre en place un monitoring via l'onglet **Enable Os guest diagnostics**
+ 
+Il permet de donner des métriques toutes les minutes sur notre VM. Il va créer puis stocker les logs dans un **storage account**. 
+On peut les visualiser directement dans la VM une fois celle-ci déployées dans **Diagnostic settings**
+
+#### Le storage account 
+On peut le consulter en allant dessus et en cliquant sur **Open in Explorer**, un visualiseur de base de données apparaît 
+
+On peut aussi l'installer log après lancement VM en allant dans **diagnostic settings** puis en choisissant de créer un storage account pour stocker ses logs.
+
+### L'espace d'analyse des logs  
+#### L'onglet Logs dans notre VM
+On nous propose de créer automatiquement un espace de travail d'analyse de logs. On peut aussi le créer nous même et le mapper via **log analytics workspaces**. 
+On fois cette espace créé on pourra effectuer des **requêtes** sur notre base de données.
+Des requêtes prédéfinies sont enregistrées dans l'onglet logs pour faciliter leur mise en place
+#### La configuration de l'agent 
+Dans l'onglet **Agent Configuration** de notre log analytics workspace, on peut configurer un agent qui va ramener sur le serveur de supervision les données du serveur cible supervisé 
+ 
+ Il existe une liste d'indicateurs de performances prédéfinis.
+### Le compte d'automatisation  
+Permet de mettre en place une automatisation de certaines tâches :
+- gérer les runbooks
+- déploiement de scripts
+- manager les updates de façon automatique 
+
+Il s'appuie sur un **log analytics workspaces** en particulier pour :
+- update management 
+- change tracking
+- start/stop VMs pendant les heures off 
+
+et un **storage account** 
+#### Update management 
+Donne un aperçu du niveau de chaque machine en terme de mise à jour
+- compliant / non-compliant
+- mises à jour critiques non réalisées
+- etc. 
+#### Runbooks gallery 
+Donne une liste de scripts que l'on peut appliquer sur les VMs 
+### VM + Supervision recapitulation 
+5'27''
+## Azure Disks 
+### Définition 
+Ce sont comme des disques physiques mais virtualisés : 
+On choisit : 
+- la taille 
+- le type 
+- certaines configurations
+On a pas besoin de se soucier du hardware 
+Azure va créer **3 replicas** de nos données permettant une accessibilité de 99,999% 
+### Encryption
+- SSD (Server Side Encryption)
+- ADE (Azure Disk Encryption) : permet de crypter les OS et les données des disques utilisés par les machines virtuelles Azure. On utilise **BitLocker** pour Windows et **DM-Crypt** pour Linux
+### Roles de disques 
+- disque pour les données : Disque C:/
+- disque pour l'OS : clef bootable avec l'OS
+- disque temporaire : Disque D:/ ou /dev/sbd en linux 
+### Les disques instantanés (snapshot)
+C'est une copie read-only complète de tous les disques cités précédemment.
+Cela créé une image instantanée de toutes les données que contient la VM 
+Le problème est qu'il ne peut ensuite **plus différencier les données des trois disques** 
+### Type de Disques 
+- Ultra Disk : 160000 Input Output per seconds (IOPs)
+- Premium SSD : 20000 IOPs
+- Standard SSD : 6000 IOPs
+- Standard HDD : 2000 IOPs
+### Bursting 
+Permet de booster le IOPs d'un disque pendant une période de temps donnée. Sorte de nitro.
+### Attacher un disque complémentaire sur VM Linux  
+1. Aller dans l'onglet **Disk** et faire **create and attach a new disk**
+2. Se connecter en ssh à la VM 
+3. Suivre les étapes du liens suivant :
+https://docs.microsoft.com/fr-fr/azure/virtual-machines/linux/add-disk
+### Attacher un disque complémentaire sur VM Windows  
+1. Aller dans l'onglet **Disk** et faire **create and attach a new disk**
+2. Se connecter en RDP à la VM 
+3. Aller dans l'explorateur de dossier 
+4. Trouver le nouveau Disque 
+5. Lorsque l'on clique dessus on nous propose de le formater 
+
+**Formater un disque** : initialiser un périphérique de stockage (disque dur, clé USB, carte mémoire, disquette, etc.) en lui définissant un système de fichiers. ... 
+
+Les systèmes de fichiers les plus répandus sont FAT, FAT32, NTFS, ext2, ext3, ext4 et UFS.
+### Disk recap 
+6'01''
+## Azure Application Gateway 
+C'est ce qui va faire la liaison entre le trafic extérieur (internet) et le trafic de notre LAN.
+Il redirige les demande http vers la bonne adresse IP.
+C'est le robot qui va envoyer le bagage sur le bon tapis pour qu'il arrive dans la soute du bon avion.
+Pour le configurer on a besoin d'un front-end (adresse IP publique ou privée) et d'un back-end (ensemble des ressources vers lesquelles notre passerelle peut envoyer du trafic)
+### Règles de routage 
+#### Listeners
+Il écoute sur un port spécifique le trafic avec un certain protocole. 
+#### cibles back-end
+Choisit entre envoyer vers le back-end du routeur ou bien le rediriger
+#### HTTP Settings
+permet de créer des règles sur le back-up. en particulier la gestion des cookies, le temps de requête du port, etc
+### Gateway recap 
+6'11''
+## Associate a load balancer
+### Définition 
+Un load balancer a pour tâche de répartir la charge de travail (d'un serveur Web / email / base de données par exemple) entre un ou plusieurs serveurs (backends). Pour que ce service de répartition de charge soit opérationnel, il faudra naturellement faire appel à des serveurs à la configuration et aux données contenues parfaitement identiques.
+## Scale Set
+Modifie la taille ou le nombre de VM en fonction de l'appel de charge 
+### Types de Load balancer
+- Application gateway : joue aussi le rôle de load balancer mais **seulement pour le trafic HTTP**
+- Azure Load Balancer : **pour le trafic TCP/UDP**
+### Scaling Policy
+Determine quand une VM doit être ajoutée ou enlevée pour obtenir la bonne capacité
+- Scale out : quand on ajoute une VM en fonction de % CPU / unité de temps on ajoute X VM
+- Scale in : pareil mais dans le sens inverse
+### Health Monitoring
+Permet de déterminer si le server est en bonne ou mauvaise santé 
+Il existe deux mode de supervision de la santé du serveur :
+- Application health extension : ping une requête http sur un chemin spécifique 
+- Approbation du load balancer : check si une requête TCP, UDP ou HTTP fonctionne 
+On une instance s'avère être en mauvaise santé on peut la supprimer automatiquement et en créer une autre 
+### Scale set recap 
+6'21''
+## Service d'Applications Azures 
+### Introduction
+Service basé sur HTTP qui héberge des applications
+C'est un PaaS. On peut l'assimiler à **Heroku**
+Il veille sur :
+- la sécurité des patchs OS 
+- load balancing 
+- autoscaling
+- gestion automatique 
+On peut l'implémenter avec de multiples outils :
+- GitHub 
+- DockerHub
+- etc
+
+Comme elle se base sur l'HHTP, il faudra lui attribuer un nom de domaine 
+### Runtimes 
+C'est une instruction qui est exécutée en code pendant que le programme est en train de tourner (.NET, .NETCORE, Java, Ruby, Node.js, PHP, Python)
+### Custom container
+On peut créer nos propres containers personnalisés 
+
+- On crée notre container Docker dans notre environnement local 
+- On le pousse sur Azure Container Registry
+- On le déploie sur App Service  
+
+### Emplacement de deploiement (Deployment Slots)
+Permet de créer plusieurs environnements de notre web application.
+C'est un moyen simple et rapide de la dupliquer en créant un autre environnement pour des cas d'utilisations différents  
+
+### Exemple
+On peut par exemple lancer une app service azure et la **connecter à github**.
+
+Lorsque l'on fait un commit d'un nouveau script sur la branche master par exemple. On verra immédiatement l'update qui se fera sur le site 
+
+De plus on peut utiliser **Deployment slot** pour créer un clone de notre site sur un autre url ou alors créer une branche différente github que l'on pourra atteindre à partir d'une autre url.
+
+On peut donc tester un site internet par exemple.
+
+On peut ensuite créer un **scale set** pour ajouter ou retirer des instances en fonction du **scale rule**
